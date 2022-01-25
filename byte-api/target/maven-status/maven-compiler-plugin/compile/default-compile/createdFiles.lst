@@ -1,12 +1,2 @@
-com\conghuhu\vo\ArticleVo.class
 com\conghuhu\entity\User.class
-com\conghuhu\dos\Archives.class
-com\conghuhu\vo\CommentVo.class
-com\conghuhu\entity\Article.class
-com\conghuhu\entity\Category.class
-com\conghuhu\entity\ArticleBody.class
 com\conghuhu\vo\UserVo.class
-com\conghuhu\entity\Comment.class
-com\conghuhu\vo\TagVo.class
-com\conghuhu\entity\ArticleTag.class
-com\conghuhu\entity\Tag.class

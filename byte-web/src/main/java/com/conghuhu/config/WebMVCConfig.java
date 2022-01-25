@@ -13,6 +13,6 @@ public class WebMVCConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         // 跨域配置
-        registry.addMapping("/**").allowedOrigins("http://localhost:8080","http://47.103.98.136/");
+        registry.addMapping("/**").allowedOrigins("http://localhost:8090","http://47.103.98.136/");
     }
 }
