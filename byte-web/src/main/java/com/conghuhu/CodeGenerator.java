@@ -46,8 +46,7 @@ public class CodeGenerator {
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
 //        String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir("F:\\Project\\myBlog-springBoot\\blog-web" + "/src/main/java");
-//        gc.setOutputDir("D:\\test");
+        gc.setOutputDir("E:\\桌面\\BYtance-web\\ByteDance-web\\byte-web" + "/src/main/java");
         gc.setAuthor("conghuhu");
         gc.setOpen(false); // 自动生成后打开资源管理器
         gc.setSwagger2(true); // 实体属性 Swagger2 注解
@@ -56,7 +55,7 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://47.103.201.93:3306/qingxun?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
+        dsc.setUrl("jdbc:mysql://150.158.97.5:3306/qingxun?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
@@ -89,7 +88,7 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return "F:\\Project\\myBlog-springBoot\\blog-web" + "/src/main/resources/mapper/"
+                return "E:\\桌面\\BYtance-web\\ByteDance-web\\byte-web" + "/src/main/resources/mapper/"
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
@@ -111,7 +110,7 @@ public class CodeGenerator {
         strategy.setRestControllerStyle(true);
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
         strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix("m_");
+        strategy.setTablePrefix("byte_");
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();

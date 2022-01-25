@@ -1,12 +1,10 @@
 com\conghuhu\result\ResultCode.class
-com\conghuhu\params\PageParams.class
-com\conghuhu\params\CommentParam.class
 com\conghuhu\utils\IpUtils.class
 com\conghuhu\result\ResultTool.class
 com\conghuhu\utils\JwtTokenUtil.class
 com\conghuhu\utils\QiniuUtils.class
 com\conghuhu\result\JsonResult.class
 com\conghuhu\params\RegisterParam.class
-com\conghuhu\params\ArticleParam.class
+com\conghuhu\utils\RedisUtil.class
 com\conghuhu\utils\UserThreadLocal.class
 com\conghuhu\utils\HttpContextUtils.class

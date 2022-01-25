@@ -64,14 +64,9 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
             System.out.println(password);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             newUser.setPassword(passwordEncoder.encode(password));
-            newUser.setCreated(LocalDateTime.now());
-            newUser.setLastLogin(LocalDateTime.now());
+            newUser.setCreatedTime(LocalDateTime.now());
+            newUser.setLastLoginTime(LocalDateTime.now());
             newUser.setAvatar("/static/img/logo.b3a48c0.png");
-            newUser.setAdmin(false);
-            newUser.setSalt("");
-            newUser.setStatus(1);
-            newUser.setEmail(email);
-            newUser.setMobilePhoneNumber(mobilePhoneNumber);
             this.userService.save(newUser);
             String token = jwtUtils.createToken(username,password);
             stringRedisTemplate.opsForValue().set("Token_"+token, JSON.toJSONString(newUser),1, TimeUnit.DAYS);
