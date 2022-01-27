@@ -67,7 +67,8 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
             newUser.setPassword(passwordEncoder.encode(password));
             newUser.setCreatedTime(LocalDateTime.now());
             newUser.setLastLoginTime(LocalDateTime.now());
-            newUser.setAvatar("/static/img/logo.b3a48c0.png");
+            newUser.setFullname(fullName);
+            newUser.setAvatar("https://joeschmoe.io/api/v1/random");
             this.userService.save(newUser);
             String token = jwtUtils.createToken(username,password);
             stringRedisTemplate.opsForValue().set("Token_"+token, JSON.toJSONString(newUser),1, TimeUnit.DAYS);

@@ -1,6 +1,6 @@
 package com.conghuhu.mapper;
 
-import com.conghuhu.entity.Card;
+import com.conghuhu.entity.Tag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
  * </p>
  *
  * @author conghuhu
- * @since 2022-01-26
+ * @since 2022-01-27
  */
 @Repository
 @Mapper
-public interface CardMapper extends BaseMapper<Card> {
+public interface TagMapper extends BaseMapper<Tag> {
 
 }

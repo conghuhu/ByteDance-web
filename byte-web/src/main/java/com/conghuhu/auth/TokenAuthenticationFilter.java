@@ -6,6 +6,7 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +29,7 @@ import java.io.IOException;
  * @author conghuhu
  * @create 2021-10-05 19:40
  */
-
+@Slf4j
 public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
     public TokenAuthenticationFilter(AuthenticationManager authManager) {
@@ -37,12 +38,12 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        System.out.println("=================" + request.getRequestURI());
+        log.info("=================" + request.getRequestURI());
         //不需要鉴权
         if (request.getRequestURI().contains("login")) {
             chain.doFilter(request, response);
         }
-        UsernamePasswordAuthenticationToken authentication  = null;
+        UsernamePasswordAuthenticationToken authentication = null;
         JsonResult result = null;
 
         //处理编码方式，防止中文乱码的情况
@@ -55,7 +56,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
         } else {
             result = ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-            System.out.println("鉴权失败");
+            log.error("鉴权失败");
             response.getWriter().write(JSON.toJSONString(result));
         }
     }
@@ -67,11 +68,11 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         if (!StringUtils.hasText(token)) {
             token = request.getParameter("token");
         }
-        System.out.println("token为:"+token);
+        log.info("token为:" + token);
         if (token != null && !"".equals(token.trim())) {
             // 从Token中解密获取用户名
             String userName = JwtTokenUtil.getUserNameFromToken(token);
-            System.out.println("token解析出用户名"+userName);
+            log.info("token解析出用户名" + userName);
             if (userName != null) {
                 String nativePassword = JwtTokenUtil.getUserPasswordFromToken(token);
                 return new UsernamePasswordAuthenticationToken(userName, nativePassword);

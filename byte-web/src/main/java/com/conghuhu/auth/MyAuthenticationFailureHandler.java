@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -18,11 +19,12 @@ import java.io.IOException;
  * @author conghuhu
  * @create 2021-10-11 16:27
  */
+@Slf4j
 @Component
 public class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        System.out.println("出了点问题");
+        log.error("鉴权有问题");
         e.printStackTrace();
         JsonResult result = null;
         if (e instanceof AccountExpiredException) {

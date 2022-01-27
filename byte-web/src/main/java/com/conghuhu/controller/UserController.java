@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author conghuhu
@@ -25,27 +25,32 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
 
-    @ApiOperation("查询用户")
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @ApiOperation(value = "查询用户", notes = "查询用户", produces = "application/json")
     @GetMapping("/{id}")
-    public JsonResult getUserById(@PathVariable Integer id){
+    public JsonResult getUserById(@PathVariable Integer id) {
         User user = userService.getById(id);
-        if(user != null){
+        if (user != null) {
             return ResultTool.success(user);
-        }else{
+        } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
         }
     }
 
-    @Cache(expire = 2 * 60 * 1000,name = "currentUser")
+    @ApiOperation(value = "根据token查询当前用户", notes = "查询当前用户", produces = "application/json")
+    @Cache(expire = 2 * 60 * 1000, name = "currentUser")
     @GetMapping("/currentUser")
-    public JsonResult getCurrentUser(@RequestHeader("token") String token){
+    public JsonResult getCurrentUser(@RequestHeader("token") String token) {
         User user = userService.findUserByToken(token);
-        if(user != null){
+        if (user != null) {
             return ResultTool.success(user);
-        }else{
+        } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
         }
     }

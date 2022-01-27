@@ -23,12 +23,12 @@ public enum ResultCode {
     PARAM_TYPE_ERROR(1003, "参数类型错误"),
     PARAM_NOT_COMPLETE(1004, "参数缺失"),
 
-    PARAMS_ERROR(10001,"参数有误"),
-    ACCOUNT_PWD_NOT_EXIST(10002,"用户名或密码不存在"),
-    TOKEN_ERROR(10003,"token不合法"),
-    ACCOUNT_EXIST(10004,"账号已存在"),
-    SESSION_TIME_OUT(90001,"会话超时"),
-    UPLOAD_FAIL(20001,"上传失败"),
+    PARAMS_ERROR(10001, "参数有误"),
+    ACCOUNT_PWD_NOT_EXIST(10002, "用户名或密码不存在"),
+    TOKEN_ERROR(10003, "token不合法"),
+    ACCOUNT_EXIST(10004, "账号已存在"),
+    SESSION_TIME_OUT(90001, "会话超时"),
+    UPLOAD_FAIL(20001, "上传失败"),
 
     /* 用户错误 */
     USER_NOT_LOGIN(90002, "用户未登录"),
@@ -42,10 +42,14 @@ public enum ResultCode {
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
 
     /* 查询错误 */
-    NOT_FOUND(20010,"查询无果"),
+    NOT_FOUND(20010, "查询无果"),
+
+    /* 标签错误 */
+    TAG_CONSIST(21000, "标签已存在"),
 
     /* 业务错误 */
     NO_PERMISSION(70001, "没有权限");
+
     private Integer code;
     private String message;
 
