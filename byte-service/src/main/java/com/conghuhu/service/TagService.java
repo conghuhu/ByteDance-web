@@ -42,4 +42,12 @@ public interface TagService extends IService<Tag> {
      * @return
      */
     JsonResult removeTagById(Long id);
+
+    /**
+     * 根据cardId，设置其关联tag
+     * @param tagId
+     * @param cardId
+     * @return
+     */
+    JsonResult setTagByCardId(Long tagId, Long cardId);
 }

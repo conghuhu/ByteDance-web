@@ -46,7 +46,10 @@ public enum ResultCode {
 
     /* 标签错误 */
     TAG_CONSIST(21000, "标签已存在"),
+    TAG_ID_NOT_CONSIST(21001,"tagId有误，请检查"),
 
+    /* 卡片错误 */
+    CARD_ID_NOT_CONSIST(22001,"cardId有误，请检查"),
     /* 业务错误 */
     NO_PERMISSION(70001, "没有权限");
 
