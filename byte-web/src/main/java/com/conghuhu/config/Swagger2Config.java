@@ -41,8 +41,8 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("我的博客文档") //设置文档的标题
-                .description("博客 API 接口文档") // 设置文档的描述
+                .title("ByteDance-ToDo接口文档") //设置文档的标题
+                .description("后端接口文档") // 设置文档的描述
                 .version(VERSION) // 设置文档的版本信息-> 1.0.0 Version information
                 .termsOfServiceUrl("http://www.baidu.com") // 设置文档的License信息->1.3 License information
                 .build();

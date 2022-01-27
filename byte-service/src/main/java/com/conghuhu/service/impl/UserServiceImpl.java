@@ -24,12 +24,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
     
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-    
+    private final StringRedisTemplate stringRedisTemplate;
+
+    public UserServiceImpl(UserMapper userMapper, StringRedisTemplate stringRedisTemplate) {
+        this.userMapper = userMapper;
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
+
     @Override
     public User getByUserName(String name) {
         return userMapper.getByUserName(name);
