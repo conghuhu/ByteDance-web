@@ -51,4 +51,8 @@ public class TagController {
     public JsonResult removeTagById(@PathVariable Long id) {
         return tagService.removeTagById(id);
     }
+
+    public JsonResult setTagByCardId(){
+        return null;
+    }
 }
