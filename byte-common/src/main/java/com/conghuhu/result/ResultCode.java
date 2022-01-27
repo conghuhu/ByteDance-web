@@ -46,7 +46,8 @@ public enum ResultCode {
 
     /* 标签错误 */
     TAG_CONSIST(21000, "标签已存在"),
-
+    /* 标签错误 */
+    CARD_CONSIST(21000, "卡片已存在"),
     /* 业务错误 */
     NO_PERMISSION(70001, "没有权限");
 

@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class CardParam {
+    private Long cardId;
+
     private String cardname;
 
     private String description;
@@ -16,10 +18,13 @@ public class CardParam {
 
     @TableField("productId")
     private Long productId;
-
+    private Boolean closed;
     private Float pos;
-
+    private LocalDateTime deadline;
     private Boolean tag;
 
     private Boolean executor;
+    private LocalDateTime begintime;
+
+    private Boolean expire;
 }
