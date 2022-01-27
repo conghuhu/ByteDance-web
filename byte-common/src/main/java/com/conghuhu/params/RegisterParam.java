@@ -3,6 +3,7 @@ package com.conghuhu.params;
 import lombok.Data;
 
 /**
+ * 注册参数
  * @author conghuhu
  * @create 2021-10-11 20:41
  */
@@ -13,7 +14,8 @@ public class RegisterParam {
 
     private String password;
 
-    private String email;
+    private String verifyCode;
 
-    private String mobilePhoneNumber;
+    private String fullName;
+
 }

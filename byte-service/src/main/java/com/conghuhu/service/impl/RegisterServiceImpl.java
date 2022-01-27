@@ -12,6 +12,7 @@ import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.RegisterService;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @author conghuhu
  * @create 2021-10-11 20:48
  */
+@Slf4j
 @Service
 public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implements RegisterService {
 
@@ -52,8 +54,8 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
          */
         String username = registerParam.getUsername();
         String password = registerParam.getPassword();
-        String email = registerParam.getEmail();
-        String mobilePhoneNumber = registerParam.getMobilePhoneNumber();
+        String verifyCode = registerParam.getVerifyCode();
+        String fullName = registerParam.getFullName();
 
         User user = userService.getByUserName(username);
         if(user != null){
@@ -61,7 +63,6 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         }else{
             User newUser = new User();
             newUser.setUsername(username);
-            System.out.println(password);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             newUser.setPassword(passwordEncoder.encode(password));
             newUser.setCreatedTime(LocalDateTime.now());
