@@ -13,4 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CardService extends IService<Card> {
 
+    String addCard(Card card);
+
+    Card getByName(String cardname);
+
 }

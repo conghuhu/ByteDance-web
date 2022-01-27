@@ -17,4 +17,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface CardMapper extends BaseMapper<Card> {
 
+    Card getByCardName(String cardname);
+
 }
