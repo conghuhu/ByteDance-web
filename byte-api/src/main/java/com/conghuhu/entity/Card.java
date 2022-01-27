@@ -29,9 +29,9 @@ public class Card implements Serializable {
     @TableId("cardId")
     private Long cardId;
 
-    private String name;
+    private String cardname;
 
-    private String desc;
+    private String description;
 
     @TableField("listId")
     private Long listId;
@@ -48,6 +48,10 @@ public class Card implements Serializable {
     private Boolean tag;
 
     private Boolean executor;
+
+    private LocalDateTime begintime;
+
+    private Boolean expire;
 
 
 }
