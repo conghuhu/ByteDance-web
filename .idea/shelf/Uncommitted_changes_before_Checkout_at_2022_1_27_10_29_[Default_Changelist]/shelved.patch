@@ -1,0 +1,542 @@
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Encoding\" native2AsciiForPropertiesFiles=\"true\" defaultCharsetForPropertiesFiles=\"UTF-8\">\r\n    <file url=\"file://$PROJECT_DIR$/byte-api/src/main/java\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-api/src/main/resources\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-common/src/main/java\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-common/src/main/resources\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-service/src/main/java\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-service/src/main/resources\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-web/src/main/java\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/byte-web/src/main/resources\" charset=\"UTF-8\" />\r\n    <file url=\"PROJECT\" charset=\"UTF-8\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/encodings.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ .idea/encodings.xml	(date 1643207245266)
+@@ -2,13 +2,13 @@
+ <project version="4">
+   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+     <file url="file://$PROJECT_DIR$/byte-api/src/main/java" charset="UTF-8" />
+-    <file url="file://$PROJECT_DIR$/byte-api/src/main/resources" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/byte-common/src/main/java" charset="UTF-8" />
+-    <file url="file://$PROJECT_DIR$/byte-common/src/main/resources" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/byte-service/src/main/java" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/byte-service/src/main/resources" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/byte-web/src/main/java" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/byte-web/src/main/resources" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+     <file url="PROJECT" charset="UTF-8" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: byte-service/src/main/resources/mapper/CardMapper.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\r\n<mapper namespace=\"com.conghuhu.mapper.CardMapper\">\r\n\r\n</mapper>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-service/src/main/resources/mapper/CardMapper.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-service/src/main/resources/mapper/CardMapper.xml	(date 1643209133579)
+@@ -1,5 +1,13 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.conghuhu.mapper.CardMapper">
+-
++    <select id="getByCardName" resultType="com.conghuhu.entity.Card">
++        select * from byte_card where cardname=#{cardname} limit 1;
++    </select>
++    <select id="getByCardId" resultType="com.conghuhu.entity.Card">
++        select * from byte_card where cardId=#{cardId} limit 1;
++    </select>
++    <insert id="insertCard">
++      insert into byte_card (cardname,description,listId,productId,closed,pos,deadline,tag,executor,begintime,expire) values (#{cardname},#{description},#{listId},#{productId},#{closed},#{pos},#{deadline},#{tag},#{executor},#{begintime},#{expire});
++    </insert>
+ </mapper>
+Index: byte-service/src/main/java/com/conghuhu/mapper/CardMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu.mapper;\r\n\r\nimport com.conghuhu.entity.Card;\r\nimport com.baomidou.mybatisplus.core.mapper.BaseMapper;\r\n\r\n/**\r\n * <p>\r\n *  Mapper 接口\r\n * </p>\r\n *\r\n * @author conghuhu\r\n * @since 2022-01-26\r\n */\r\npublic interface CardMapper extends BaseMapper<Card> {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-service/src/main/java/com/conghuhu/mapper/CardMapper.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-service/src/main/java/com/conghuhu/mapper/CardMapper.java	(date 1643205752039)
+@@ -1,7 +1,11 @@
+ package com.conghuhu.mapper;
+ 
+-import com.conghuhu.entity.Card;
+ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
++import com.conghuhu.entity.Card;
++import com.conghuhu.entity.User;
++import org.apache.ibatis.annotations.Mapper;
++import org.apache.ibatis.annotations.Param;
++import org.springframework.stereotype.Repository;
+ 
+ /**
+  * <p>
+@@ -11,6 +15,12 @@
+  * @author conghuhu
+  * @since 2022-01-26
+  */
++@Repository
++@Mapper
+ public interface CardMapper extends BaseMapper<Card> {
++    Card getByCardName(@Param("cardname") String cardname);
++    Card getByCardId(@Param("cardId") Integer cardId);
++
++    int insertCard(Card card);
+ 
+ }
+Index: byte-service/src/main/java/com/conghuhu/service/impl/CardServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu.service.impl;\r\n\r\nimport com.conghuhu.entity.Card;\r\nimport com.conghuhu.mapper.CardMapper;\r\nimport com.conghuhu.service.CardService;\r\nimport com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;\r\nimport org.springframework.stereotype.Service;\r\n\r\n/**\r\n * <p>\r\n *  服务实现类\r\n * </p>\r\n *\r\n * @author conghuhu\r\n * @since 2022-01-26\r\n */\r\n@Service\r\npublic class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements CardService {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-service/src/main/java/com/conghuhu/service/impl/CardServiceImpl.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-service/src/main/java/com/conghuhu/service/impl/CardServiceImpl.java	(date 1643205752013)
+@@ -1,9 +1,12 @@
+ package com.conghuhu.service.impl;
+ 
++import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+ import com.conghuhu.entity.Card;
++import com.conghuhu.entity.User;
+ import com.conghuhu.mapper.CardMapper;
+ import com.conghuhu.service.CardService;
+-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.data.redis.core.StringRedisTemplate;
+ import org.springframework.stereotype.Service;
+ 
+ /**
+@@ -16,5 +19,30 @@
+  */
+ @Service
+ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements CardService {
++    @Autowired
++    private CardMapper cardMapper;
++
++    @Autowired
++    private StringRedisTemplate stringRedisTemplate;
++
++    @Override
++    public Card getByCardName(String cardname) {
++        return cardMapper.getByCardName(cardname);
++    }
++
++    @Override
++    public Card getByCardId(Integer cardId) {
++        return cardMapper.getByCardId(cardId);
++    }
+ 
++    @Override
++    public String addCard(Card card) {
++
++        if(cardMapper.insertCard(card)>0){
++            return "success";
++        }
++        else {
++            return "fail";
++        }
++    }
+ }
+Index: byte-api/src/main/java/com/conghuhu/entity/Card.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu.entity;\r\n\r\nimport com.baomidou.mybatisplus.annotation.TableName;\r\nimport com.baomidou.mybatisplus.annotation.TableId;\r\nimport java.time.LocalDateTime;\r\nimport com.baomidou.mybatisplus.annotation.TableField;\r\nimport java.io.Serializable;\r\nimport io.swagger.annotations.ApiModel;\r\nimport io.swagger.annotations.ApiModelProperty;\r\nimport lombok.Data;\r\nimport lombok.EqualsAndHashCode;\r\n\r\n/**\r\n * <p>\r\n * \r\n * </p>\r\n *\r\n * @author conghuhu\r\n * @since 2022-01-26\r\n */\r\n@Data\r\n@EqualsAndHashCode(callSuper = false)\r\n@TableName(\"byte_card\")\r\n@ApiModel(value=\"Card对象\", description=\"\")\r\npublic class Card implements Serializable {\r\n\r\n    private static final long serialVersionUID = 1L;\r\n\r\n    @TableId(\"cardId\")\r\n    private Long cardId;\r\n\r\n    private String name;\r\n\r\n    private String desc;\r\n\r\n    @TableField(\"listId\")\r\n    private Long listId;\r\n\r\n    @TableField(\"productId\")\r\n    private Long productId;\r\n\r\n    private Boolean closed;\r\n\r\n    private Float pos;\r\n\r\n    private LocalDateTime deadline;\r\n\r\n    private Boolean tag;\r\n\r\n    private Boolean executor;\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-api/src/main/java/com/conghuhu/entity/Card.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-api/src/main/java/com/conghuhu/entity/Card.java	(date 1643209133571)
+@@ -1,15 +1,16 @@
+ package com.conghuhu.entity;
+ 
+-import com.baomidou.mybatisplus.annotation.TableName;
+-import com.baomidou.mybatisplus.annotation.TableId;
+-import java.time.LocalDateTime;
++import com.baomidou.mybatisplus.annotation.IdType;
+ import com.baomidou.mybatisplus.annotation.TableField;
+-import java.io.Serializable;
++import com.baomidou.mybatisplus.annotation.TableId;
++import com.baomidou.mybatisplus.annotation.TableName;
+ import io.swagger.annotations.ApiModel;
+-import io.swagger.annotations.ApiModelProperty;
+ import lombok.Data;
+ import lombok.EqualsAndHashCode;
+ 
++import java.io.Serializable;
++import java.time.LocalDateTime;
++
+ /**
+  * <p>
+  * 
+@@ -26,12 +27,12 @@
+ 
+     private static final long serialVersionUID = 1L;
+ 
+-    @TableId("cardId")
++    @TableId(value = "cardId", type = IdType.AUTO)
+     private Long cardId;
+ 
+-    private String name;
++    private String cardname;
+ 
+-    private String desc;
++    private String description;
+ 
+     @TableField("listId")
+     private Long listId;
+@@ -49,5 +50,9 @@
+ 
+     private Boolean executor;
+ 
++    private LocalDateTime begintime;
++
++    private Boolean expire;
++
+ 
+ }
+Index: byte-common/src/main/java/com/conghuhu/params/CardParam.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu.params;\r\n\r\npublic class CardParam {\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-common/src/main/java/com/conghuhu/params/CardParam.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-common/src/main/java/com/conghuhu/params/CardParam.java	(date 1643207793114)
+@@ -1,4 +1,25 @@
+ package com.conghuhu.params;
+ 
++import com.baomidou.mybatisplus.annotation.TableField;
++import lombok.Data;
++
++import java.time.LocalDateTime;
++
++@Data
+ public class CardParam {
++    private String cardname;
++
++    private String description;
++
++    @TableField("listId")
++    private Long listId;
++
++    @TableField("productId")
++    private Long productId;
++
++    private Float pos;
++
++    private Boolean tag;
++
++    private Boolean executor;
+ }
+Index: byte-web/src/main/java/com/conghuhu/controller/CardController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu.controller;\r\n\r\n\r\nimport org.springframework.web.bind.annotation.RequestMapping;\r\n\r\nimport org.springframework.web.bind.annotation.RestController;\r\n\r\n/**\r\n * <p>\r\n *  前端控制器\r\n * </p>\r\n *\r\n * @author conghuhu\r\n * @since 2022-01-26\r\n */\r\n@RestController\r\n@RequestMapping(\"/card\")\r\npublic class CardController {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-web/src/main/java/com/conghuhu/controller/CardController.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-web/src/main/java/com/conghuhu/controller/CardController.java	(date 1643209133590)
+@@ -1,9 +1,20 @@
+ package com.conghuhu.controller;
+ 
+ 
+-import org.springframework.web.bind.annotation.RequestMapping;
++import com.conghuhu.entity.Card;
++import com.conghuhu.entity.User;
++import com.conghuhu.mapper.CardMapper;
++import com.conghuhu.params.CardParam;
++import com.conghuhu.result.JsonResult;
++import com.conghuhu.result.ResultCode;
++import com.conghuhu.result.ResultTool;
++import com.conghuhu.service.CardService;
++import com.conghuhu.service.UserService;
++import io.swagger.annotations.ApiOperation;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.web.bind.annotation.*;
+ 
+-import org.springframework.web.bind.annotation.RestController;
++import java.time.LocalDateTime;
+ 
+ /**
+  * <p>
+@@ -14,7 +25,55 @@
+  * @since 2022-01-26
+  */
+ @RestController
+-@RequestMapping("/card")
++@RequestMapping("/cards")
+ public class CardController {
++    @Autowired
++    private CardService cardService;
++
++    @Autowired
++    private CardMapper cardMapper;
+ 
++    @GetMapping("/querybyid/{cardId}")
++    public JsonResult getCardById(@PathVariable Integer cardId){
++//        Card card = cardService.getByCardId(cardId);
++        Card card = cardService.getById(cardId);
++        if(card != null){
++            return ResultTool.success(card);
++        }else{
++            return ResultTool.fail(ResultCode.NOT_FOUND);
++        }
++
++    }
++
++    @GetMapping("/querybyname/{cardname}")
++    public JsonResult getCardByName(@PathVariable String cardname){
++        Card card = cardService.getByCardName(cardname);
++        if(card != null){
++            return ResultTool.success(card);
++        }else{
++            return ResultTool.fail(ResultCode.NOT_FOUND);
++        }
++    }
++
++    @PostMapping("/addcard")
++    public JsonResult addCard(@RequestBody CardParam cardParam){
++        Card card=new Card();
++        card.setCardname(cardParam.getCardname());
++        card.setDescription(cardParam.getDescription());
++        card.setListId(cardParam.getListId());
++        card.setProductId(cardParam.getProductId());
++        card.setClosed(false);
++        card.setPos(cardParam.getPos());
++        card.setDeadline(LocalDateTime.now());
++        card.setTag(cardParam.getTag());
++        card.setExecutor(cardParam.getExecutor());
++        card.setBegintime(LocalDateTime.now());
++        card.setExpire(false);
++
++        if(cardService.addCard(card) == "success"){
++            return ResultTool.success();
++        }else{
++            return ResultTool.fail();
++        }
++    }
+ }
+Index: byte-web/src/main/java/com/conghuhu/CodeGenerator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu;\r\n\r\nimport com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;\r\nimport com.baomidou.mybatisplus.core.toolkit.StringPool;\r\nimport com.baomidou.mybatisplus.core.toolkit.StringUtils;\r\nimport com.baomidou.mybatisplus.generator.AutoGenerator;\r\nimport com.baomidou.mybatisplus.generator.InjectionConfig;\r\nimport com.baomidou.mybatisplus.generator.config.*;\r\nimport com.baomidou.mybatisplus.generator.config.po.TableInfo;\r\nimport com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;\r\nimport com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Scanner;\r\n\r\n/**\r\n * @author conghuhu\r\n * @create 2021-09-25 15:11\r\n */\r\npublic class CodeGenerator {\r\n\r\n    /**\r\n     * <p>\r\n     * 读取控制台内容\r\n     * </p>\r\n     */\r\n    public static String scanner(String tip) {\r\n        Scanner scanner = new Scanner(System.in);\r\n        StringBuilder help = new StringBuilder();\r\n        help.append(\"请输入\" + tip + \"：\");\r\n        System.out.println(help.toString());\r\n        if (scanner.hasNext()) {\r\n            String ipt = scanner.next();\r\n            if (StringUtils.isNotBlank(ipt)) {\r\n                return ipt;\r\n            }\r\n        }\r\n        throw new MybatisPlusException(\"请输入正确的\" + tip + \"！\");\r\n    }\r\n\r\n    public static void main(String[] args) {\r\n        // 代码生成器\r\n        AutoGenerator mpg = new AutoGenerator();\r\n\r\n        // 全局配置\r\n        GlobalConfig gc = new GlobalConfig();\r\n//        String projectPath = System.getProperty(\"user.dir\");\r\n        gc.setOutputDir(\"E:\\\\桌面\\\\BYtance-web\\\\ByteDance-web\\\\byte-web\" + \"/src/main/java\");\r\n        gc.setAuthor(\"conghuhu\");\r\n        gc.setOpen(false); // 自动生成后打开资源管理器\r\n        gc.setSwagger2(true); // 实体属性 Swagger2 注解\r\n        gc.setServiceName(\"%sService\");\r\n        mpg.setGlobalConfig(gc);\r\n\r\n        // 数据源配置\r\n        DataSourceConfig dsc = new DataSourceConfig();\r\n        dsc.setUrl(\"jdbc:mysql://150.158.97.5:3306/qingxun?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC\");\r\n        // dsc.setSchemaName(\"public\");\r\n        dsc.setDriverName(\"com.mysql.cj.jdbc.Driver\");\r\n        dsc.setUsername(\"root\");\r\n        dsc.setPassword(\"cong0917\");\r\n        mpg.setDataSource(dsc);\r\n\r\n        // 包配置\r\n        PackageConfig pc = new PackageConfig();\r\n        pc.setModuleName(null);\r\n        pc.setParent(\"com.conghuhu\");\r\n        mpg.setPackageInfo(pc);\r\n\r\n        // 自定义配置\r\n        InjectionConfig cfg = new InjectionConfig() {\r\n            @Override\r\n            public void initMap() {\r\n                // to do nothing\r\n            }\r\n        };\r\n\r\n        // 如果模板引擎是 freemarker\r\n        String templatePath = \"/templates/mapper.xml.ftl\";\r\n        // 如果模板引擎是 velocity\r\n        // String templatePath = \"/templates/mapper.xml.vm\";\r\n\r\n        // 自定义输出配置\r\n        List<FileOutConfig> focList = new ArrayList<>();\r\n        // 自定义配置会被优先输出\r\n        focList.add(new FileOutConfig(templatePath) {\r\n            @Override\r\n            public String outputFile(TableInfo tableInfo) {\r\n                // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！\r\n                return \"E:\\\\桌面\\\\BYtance-web\\\\ByteDance-web\\\\byte-web\" + \"/src/main/resources/mapper/\"\r\n                        + \"/\" + tableInfo.getEntityName() + \"Mapper\" + StringPool.DOT_XML;\r\n            }\r\n        });\r\n\r\n        cfg.setFileOutConfigList(focList);\r\n        mpg.setCfg(cfg);\r\n\r\n        // 配置模板\r\n        TemplateConfig templateConfig = new TemplateConfig();\r\n\r\n        templateConfig.setXml(null);\r\n        mpg.setTemplate(templateConfig);\r\n\r\n        // 策略配置\r\n        StrategyConfig strategy = new StrategyConfig();\r\n        strategy.setNaming(NamingStrategy.underline_to_camel);\r\n        strategy.setColumnNaming(NamingStrategy.underline_to_camel);\r\n        strategy.setEntityLombokModel(true);\r\n        strategy.setRestControllerStyle(true);\r\n        strategy.setInclude(scanner(\"表名，多个英文逗号分割\").split(\",\"));\r\n        strategy.setControllerMappingHyphenStyle(true);\r\n        strategy.setTablePrefix(\"byte_\");\r\n        mpg.setStrategy(strategy);\r\n        mpg.setTemplateEngine(new FreemarkerTemplateEngine());\r\n        mpg.execute();\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-web/src/main/java/com/conghuhu/CodeGenerator.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-web/src/main/java/com/conghuhu/CodeGenerator.java	(date 1643170704031)
+@@ -46,7 +46,7 @@
+         // 全局配置
+         GlobalConfig gc = new GlobalConfig();
+ //        String projectPath = System.getProperty("user.dir");
+-        gc.setOutputDir("E:\\桌面\\BYtance-web\\ByteDance-web\\byte-web" + "/src/main/java");
++        gc.setOutputDir("E:\\project\\byte\\byte-serve\\ByteDance-web\\byte-web" + "/src/main/java");
+         gc.setAuthor("conghuhu");
+         gc.setOpen(false); // 自动生成后打开资源管理器
+         gc.setSwagger2(true); // 实体属性 Swagger2 注解
+@@ -88,7 +88,7 @@
+             @Override
+             public String outputFile(TableInfo tableInfo) {
+                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
+-                return "E:\\桌面\\BYtance-web\\ByteDance-web\\byte-web" + "/src/main/resources/mapper/"
++                return "E:\\project\\byte\\byte-serve\\ByteDance-web\\byte-web" + "/src/main/resources/mapper/"
+                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+             }
+         });
+Index: byte-service/src/main/java/com/conghuhu/service/CardService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.conghuhu.service;\r\n\r\nimport com.conghuhu.entity.Card;\r\nimport com.baomidou.mybatisplus.extension.service.IService;\r\n\r\n/**\r\n * <p>\r\n *  服务类\r\n * </p>\r\n *\r\n * @author conghuhu\r\n * @since 2022-01-26\r\n */\r\npublic interface CardService extends IService<Card> {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-service/src/main/java/com/conghuhu/service/CardService.java	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-service/src/main/java/com/conghuhu/service/CardService.java	(date 1643205752066)
+@@ -1,7 +1,8 @@
+ package com.conghuhu.service;
+ 
+-import com.conghuhu.entity.Card;
+ import com.baomidou.mybatisplus.extension.service.IService;
++import com.conghuhu.entity.Card;
++import com.conghuhu.entity.User;
+ 
+ /**
+  * <p>
+@@ -12,5 +13,9 @@
+  * @since 2022-01-26
+  */
+ public interface CardService extends IService<Card> {
++    Card getByCardName(String cardname);
++    Card getByCardId(Integer cardId);
++
++    String addCard(Card card);
+ 
+ }
+Index: .idea/jarRepositories.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"RemoteRepositoriesConfiguration\">\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"central\" />\r\n      <option name=\"name\" value=\"Central Repository\" />\r\n      <option name=\"url\" value=\"https://repo.maven.apache.org/maven2\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"central\" />\r\n      <option name=\"name\" value=\"Maven Central repository\" />\r\n      <option name=\"url\" value=\"https://repo1.maven.org/maven2\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"jboss.community\" />\r\n      <option name=\"name\" value=\"JBoss Community repository\" />\r\n      <option name=\"url\" value=\"https://repository.jboss.org/nexus/content/repositories/public/\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"alimaven\" />\r\n      <option name=\"name\" value=\"aliyun maven\" />\r\n      <option name=\"url\" value=\"https://maven.aliyun.com/repository/public\" />\r\n    </remote-repository>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/jarRepositories.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ .idea/jarRepositories.xml	(date 1643115212386)
+@@ -12,6 +12,11 @@
+       <option name="url" value="https://repo1.maven.org/maven2" />
+     </remote-repository>
+     <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Central Repository" />
++      <option name="url" value="http://maven.aliyun.com/nexus/content/groups/public" />
++    </remote-repository>
++    <remote-repository>
+       <option name="id" value="jboss.community" />
+       <option name="name" value="JBoss Community repository" />
+       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"MavenProjectsManager\">\r\n    <option name=\"originalFiles\">\r\n      <list>\r\n        <option value=\"$PROJECT_DIR$/pom.xml\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_8\" project-jdk-name=\"corretto-1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ .idea/misc.xml	(date 1643115102233)
+@@ -1,6 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="JavaScriptSettings">
++    <option name="languageLevel" value="ES6" />
++  </component>
+   <component name="MavenProjectsManager">
+     <option name="originalFiles">
+       <list>
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"InspectionProjectProfileManager\">\r\n  <profile version=\"1.0\">\r\n    <option name=\"myName\" value=\"Project Default\" />\r\n    <inspection_tool class=\"JavaDoc\" enabled=\"true\" level=\"WARNING\" enabled_by_default=\"true\">\r\n      <option name=\"TOP_LEVEL_CLASS_OPTIONS\">\r\n        <value>\r\n          <option name=\"ACCESS_JAVADOC_REQUIRED_FOR\" value=\"none\" />\r\n          <option name=\"REQUIRED_TAGS\" value=\"\" />\r\n        </value>\r\n      </option>\r\n      <option name=\"INNER_CLASS_OPTIONS\">\r\n        <value>\r\n          <option name=\"ACCESS_JAVADOC_REQUIRED_FOR\" value=\"none\" />\r\n          <option name=\"REQUIRED_TAGS\" value=\"\" />\r\n        </value>\r\n      </option>\r\n      <option name=\"METHOD_OPTIONS\">\r\n        <value>\r\n          <option name=\"ACCESS_JAVADOC_REQUIRED_FOR\" value=\"none\" />\r\n          <option name=\"REQUIRED_TAGS\" value=\"@return@param@throws or @exception\" />\r\n        </value>\r\n      </option>\r\n      <option name=\"FIELD_OPTIONS\">\r\n        <value>\r\n          <option name=\"ACCESS_JAVADOC_REQUIRED_FOR\" value=\"none\" />\r\n          <option name=\"REQUIRED_TAGS\" value=\"\" />\r\n        </value>\r\n      </option>\r\n      <option name=\"IGNORE_DEPRECATED\" value=\"false\" />\r\n      <option name=\"IGNORE_JAVADOC_PERIOD\" value=\"true\" />\r\n      <option name=\"IGNORE_DUPLICATED_THROWS\" value=\"false\" />\r\n      <option name=\"IGNORE_POINT_TO_ITSELF\" value=\"false\" />\r\n      <option name=\"myAdditionalJavadocTags\" value=\"date\" />\r\n    </inspection_tool>\r\n  </profile>\r\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/inspectionProfiles/Project_Default.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ .idea/inspectionProfiles/Project_Default.xml	(date 1643164622248)
+@@ -1,6 +1,7 @@
+ <component name="InspectionProjectProfileManager">
+   <profile version="1.0">
+     <option name="myName" value="Project Default" />
++    <inspection_tool class="GroovyUnusedDeclaration" enabled="false" level="WARNING" enabled_by_default="false" />
+     <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
+       <option name="TOP_LEVEL_CLASS_OPTIONS">
+         <value>
+Index: byte-service/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <parent>\r\n        <artifactId>ByteDance-ToDo</artifactId>\r\n        <groupId>com.conghuhu</groupId>\r\n        <version>1.0</version>\r\n    </parent>\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>com.byte-service</groupId>\r\n    <artifactId>byte-service</artifactId>\r\n    <description>service模块</description>\r\n    <version>1.0</version>\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>com.byte-api</groupId>\r\n            <artifactId>byte-api</artifactId>\r\n            <version>1.0</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>com.byte-common</groupId>\r\n            <artifactId>byte-common</artifactId>\r\n            <version>1.0</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-web</artifactId>\r\n            <version>2.4.1</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>mysql</groupId>\r\n            <artifactId>mysql-connector-java</artifactId>\r\n            <version>8.0.26</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>com.baomidou</groupId>\r\n            <artifactId>mybatis-plus-boot-starter</artifactId>\r\n            <version>${mybatisplus.version}</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-data-redis</artifactId>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-security</artifactId>\r\n        </dependency>\r\n\r\n    </dependencies>\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-service/pom.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-service/pom.xml	(date 1643166584010)
+@@ -12,6 +12,18 @@
+     <groupId>com.byte-service</groupId>
+     <artifactId>byte-service</artifactId>
+     <description>service模块</description>
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-compiler-plugin</artifactId>
++                <configuration>
++                    <source>8</source>
++                    <target>8</target>
++                </configuration>
++            </plugin>
++        </plugins>
++    </build>
+     <version>1.0</version>
+ 
+     <dependencies>
+Index: byte-web/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <parent>\r\n        <artifactId>ByteDance-ToDo</artifactId>\r\n        <groupId>com.conghuhu</groupId>\r\n        <version>1.0</version>\r\n    </parent>\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>com.byte-web</groupId>\r\n    <artifactId>byte-web</artifactId>\r\n    <description>web模块</description>\r\n    <version>1.0</version>\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-web</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-security</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.byte-service</groupId>\r\n            <artifactId>byte-service</artifactId>\r\n            <version>1.0</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.byte-common</groupId>\r\n            <artifactId>byte-common</artifactId>\r\n            <version>1.0</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>io.springfox</groupId>\r\n            <artifactId>springfox-swagger2</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>io.springfox</groupId>\r\n            <artifactId>springfox-swagger-ui</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>io.jsonwebtoken</groupId>\r\n            <artifactId>jjwt</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-aop</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-mail</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-test</artifactId>\r\n            <scope>test</scope>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-configuration-processor</artifactId>\r\n            <optional>true</optional>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-data-redis</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.apache.commons</groupId>\r\n            <artifactId>commons-lang3</artifactId>\r\n            <version>3.9</version>\r\n        </dependency>\r\n    </dependencies>\r\n    <build>\r\n        <plugins>\r\n<!--            <plugin>-->\r\n<!--                <groupId>org.apache.maven.plugins</groupId>-->\r\n<!--                <artifactId>maven-compiler-plugin</artifactId>-->\r\n<!--                <configuration>-->\r\n<!--                    <source>1.8</source>-->\r\n<!--                    <target>1.8</target>-->\r\n<!--                </configuration>-->\r\n<!--            </plugin>-->\r\n            <plugin>\r\n                <groupId>org.springframework.boot</groupId>\r\n                <artifactId>spring-boot-maven-plugin</artifactId>\r\n                <version>2.5.0</version>\r\n                <executions>\r\n                    <execution>\r\n                        <goals>\r\n                            <goal>repackage</goal>\r\n                        </goals>\r\n                    </execution>\r\n                </executions>\r\n            </plugin>\r\n        </plugins>\r\n    </build>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-web/pom.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-web/pom.xml	(date 1643115260657)
+@@ -95,6 +95,14 @@
+                     </execution>
+                 </executions>
+             </plugin>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-compiler-plugin</artifactId>
++                <configuration>
++                    <source>8</source>
++                    <target>8</target>
++                </configuration>
++            </plugin>
+         </plugins>
+     </build>
+ </project>
+\ No newline at end of file
+Index: byte-api/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <parent>\r\n        <artifactId>ByteDance-ToDo</artifactId>\r\n        <groupId>com.conghuhu</groupId>\r\n        <version>1.0</version>\r\n    </parent>\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>com.byte-api</groupId>\r\n    <artifactId>byte-api</artifactId>\r\n    <description>通用类模块</description>\r\n    <version>1.0</version>\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>com.baomidou</groupId>\r\n            <artifactId>mybatis-plus-boot-starter</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.baomidou</groupId>\r\n            <artifactId>mybatis-plus-generator</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.freemarker</groupId>\r\n            <artifactId>freemarker</artifactId>\r\n            <version>2.3.31</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>io.springfox</groupId>\r\n            <artifactId>springfox-swagger2</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>io.springfox</groupId>\r\n            <artifactId>springfox-swagger-ui</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.fasterxml.jackson.core</groupId>\r\n            <artifactId>jackson-annotations</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.fasterxml.jackson.core</groupId>\r\n            <artifactId>jackson-databind</artifactId>\r\n        </dependency>\r\n\r\n    </dependencies>\r\n\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-api/pom.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-api/pom.xml	(date 1643165739687)
+@@ -12,6 +12,18 @@
+     <groupId>com.byte-api</groupId>
+     <artifactId>byte-api</artifactId>
+     <description>通用类模块</description>
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-compiler-plugin</artifactId>
++                <configuration>
++                    <source>8</source>
++                    <target>8</target>
++                </configuration>
++            </plugin>
++        </plugins>
++    </build>
+     <version>1.0</version>
+ 
+     <dependencies>
+Index: byte-common/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <parent>\r\n        <artifactId>ByteDance-ToDo</artifactId>\r\n        <groupId>com.conghuhu</groupId>\r\n        <version>1.0</version>\r\n    </parent>\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>com.byte-common</groupId>\r\n    <artifactId>byte-common</artifactId>\r\n    <description>通用工具模块</description>\r\n    <version>1.0</version>\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>io.jsonwebtoken</groupId>\r\n            <artifactId>jjwt</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.byte-api</groupId>\r\n            <artifactId>byte-api</artifactId>\r\n            <version>1.0</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-web</artifactId>\r\n        </dependency>\r\n    </dependencies>\r\n\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- byte-common/pom.xml	(revision 7cff5ec5c2b759a3a6647141c81944a2cded5913)
++++ byte-common/pom.xml	(date 1643206979125)
+@@ -12,6 +12,18 @@
+     <groupId>com.byte-common</groupId>
+     <artifactId>byte-common</artifactId>
+     <description>通用工具模块</description>
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-compiler-plugin</artifactId>
++                <configuration>
++                    <source>8</source>
++                    <target>8</target>
++                </configuration>
++            </plugin>
++        </plugins>
++    </build>
+     <version>1.0</version>
+ 
+     <dependencies>

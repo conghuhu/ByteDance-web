@@ -40,10 +40,11 @@ public class CardController {
     }
 
     @ApiOperation(value = "根据卡片id获取卡片信息", notes = "根据卡片id获取卡片信息", produces = "application/json")
-    @GetMapping("/querybyid/{cardId}")
-    public JsonResult getCardById(@PathVariable Integer cardId) {
-        Card card = cardService.getById(cardId);
-        if (card != null) {
+
+    @GetMapping("/queryById/{cardId}")
+    public JsonResult getCardById(@PathVariable Integer cardId){
+        Card card =cardService.getById(cardId);
+        if(card != null){
             return ResultTool.success(card);
         } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
@@ -51,10 +52,10 @@ public class CardController {
     }
 
     @ApiOperation(value = "根据卡片名获取卡片信息", notes = "根据卡片名获取卡片信息", produces = "application/json")
-    @GetMapping("/querybyname/{cardname}")
-    public JsonResult getCardByName(@PathVariable String cardname) {
-        Card card = cardService.getByName(cardname);
-        if (card != null) {
+    @GetMapping("/queryByName/{cardname}")
+    public JsonResult getCardByName(@PathVariable String cardname){
+        Card card =cardService.getByName(cardname);
+        if(card != null){
             return ResultTool.success(card);
         } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
@@ -74,9 +75,9 @@ public class CardController {
     }
 
     @ApiOperation(value = "创建新卡片", notes = "创建新卡片", produces = "application/json")
-    @PostMapping("/addcard")
-    public JsonResult addcard(@RequestBody CardParam cardParam) {
-        Card card = new Card();
+    @PostMapping("/addCard")
+    public JsonResult addcard(@RequestBody CardParam cardParam){
+        Card card =new Card();
         card.setCardname(cardParam.getCardname());
         card.setDescription(cardParam.getDescription());
         card.setListId(cardParam.getListId());
@@ -88,7 +89,8 @@ public class CardController {
         card.setExecutor(cardParam.getExecutor());
         card.setBegintime(LocalDateTime.now());
         card.setExpired(false);
-        if (cardService.addCard(card) == "success") {
+
+        if(cardService.addCard(card)=="success"){
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -103,7 +105,8 @@ public class CardController {
 
     @ApiOperation(value = "获取当前列的卡片", notes = "获取当前列的卡片", produces = "application/json")
     @GetMapping("/getCardsByListId/{listId}")
-    public JsonResult getCardsByListId(@PathVariable Long listId) {
+    public JsonResult getCardsByListId(@PathVariable("listId") Long listId) {
+
         return cardService.getCardsByListId(listId);
     }
 

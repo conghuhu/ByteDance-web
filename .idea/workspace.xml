@@ -5,11 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3c1b9469-fe56-4553-bf52-349e4487297b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-api/src/main/java/com/conghuhu/entity/Mail.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-common/src/main/java/com/conghuhu/params/MailParam.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/mapper/MailMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/service/MailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/service/impl/MailServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/MailController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-web/src/main/resources/mapper/MailMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/byte-web/target/classes/mapper/MailMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-common/src/main/java/com/conghuhu/params/CardParam.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-common/src/main/java/com/conghuhu/params/CardParam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/service/impl/CardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/service/impl/CardServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/CardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/CardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/ListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/ListController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/TagController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/TagController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-web/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-web/target/classes/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/target/classes/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,9 +65,6 @@
     <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="F:\ByteDance-web\byte-service\src\main\resources\mapper" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\桌面\BYtance-web\ByteDance-web\byte-service\src\main\resources\mapper" />
     </key>
@@ -66,6 +72,9 @@
       <recent name="com.conghuhu.entity" />
       <recent name="com.conghuhu.service.impl" />
       <recent name="com.conghuhu.service" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\ByteDance-web\byte-service\src\main\resources\mapper" />
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.SpringBootApplicationMain">

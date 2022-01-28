@@ -111,7 +111,11 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         card.setTag(cardParam.getTag());
         card.setExecutor(cardParam.getExecutor());
         card.setBegintime(LocalDateTime.now());
+<<<<<<< HEAD
         card.setExpired(cardParam.getExpire());
+=======
+        card.setExpired(cardParam.getExpired());
+>>>>>>> kd
         int res = cardMapper.updateById(card);
         if (res > 0) {
             return ResultTool.success();
