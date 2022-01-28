@@ -30,7 +30,7 @@ public class CardController {
     @Autowired
     private CardService cardService;
     @ApiOperation(value = "根据卡片id获取卡片信息", notes = "根据卡片id获取卡片信息", produces = "application/json")
-    @GetMapping("/querybyid/{cardId}")
+    @GetMapping("/queryById/{cardId}")
     public JsonResult getCardById(@PathVariable Integer cardId){
         Card card =cardService.getById(cardId);
         if(card != null){
@@ -41,7 +41,7 @@ public class CardController {
     }
 
     @ApiOperation(value = "根据卡片名获取卡片信息", notes = "根据卡片名获取卡片信息", produces = "application/json")
-    @GetMapping("/querybyname/{cardname}")
+    @GetMapping("/queryByName/{cardname}")
     public JsonResult getCardByName(@PathVariable String cardname){
         Card card =cardService.getByName(cardname);
         if(card != null){
@@ -63,7 +63,7 @@ public class CardController {
     }
 
     @ApiOperation(value = "创建新卡片", notes = "创建新卡片", produces = "application/json")
-    @PostMapping("/addcard")
+    @PostMapping("/addCard")
     public JsonResult addcard(@RequestBody CardParam cardParam){
         Card card =new Card();
         card.setCardname(cardParam.getCardname());
@@ -76,7 +76,7 @@ public class CardController {
         card.setTag(cardParam.getTag());
         card.setExecutor(cardParam.getExecutor());
         card.setBegintime(LocalDateTime.now());
-        card.setExpire(false);
+        card.setExpired(false);
         if(cardService.addCard(card)=="success"){
             return ResultTool.success();
         }else{
@@ -92,7 +92,7 @@ public class CardController {
 
     @ApiOperation(value = "获取当前列的卡片", notes = "获取当前列的卡片", produces = "application/json")
     @GetMapping("/getCardsByListId/{listId}")
-    public JsonResult getCardsByListId(@RequestParam("listId") Long listId) {
+    public JsonResult getCardsByListId(@PathVariable("listId") Long listId) {
         return cardService.getCardsByListId(listId);
     }
 }

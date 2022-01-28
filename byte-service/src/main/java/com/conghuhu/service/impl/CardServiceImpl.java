@@ -71,7 +71,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         card.setTag(cardParam.getTag());
         card.setExecutor(cardParam.getExecutor());
         card.setBegintime(LocalDateTime.now());
-        card.setExpire(false);
+        card.setExpired(false);
 
         Card selectOne = cardMapper.selectOne(new LambdaQueryWrapper<Card>()
                 .eq(Card::getCardname, cardname));
@@ -101,7 +101,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         card.setTag(cardParam.getTag());
         card.setExecutor(cardParam.getExecutor());
         card.setBegintime(LocalDateTime.now());
-        card.setExpire(cardParam.getExpire());
+        card.setExpired(cardParam.getExpired());
         int res = cardMapper.updateById(card);
         if (res > 0) {
             return ResultTool.success();

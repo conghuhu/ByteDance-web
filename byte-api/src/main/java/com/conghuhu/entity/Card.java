@@ -51,7 +51,7 @@ public class Card implements Serializable {
 
     private LocalDateTime begintime;
 
-    private Boolean expire;
+    private Boolean expired;
 
 
 }
