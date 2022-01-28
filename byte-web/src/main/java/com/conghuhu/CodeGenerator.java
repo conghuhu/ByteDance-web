@@ -46,7 +46,7 @@ public class CodeGenerator {
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
 //        String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir("E:\\桌面\\BYtance-web\\ByteDance-web\\byte-web" + "/src/main/java");
+        gc.setOutputDir("F:\\ByteDance-web\\byte-web" + "/src/main/java");
         gc.setAuthor("conghuhu");
         gc.setOpen(false); // 自动生成后打开资源管理器
         gc.setSwagger2(true); // 实体属性 Swagger2 注解
@@ -88,10 +88,7 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return "E:\\桌面\\BYtance-web\\ByteDance-web\\byte-web" + "/src/main/resources/mapper/"
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
-            }
-        });
+                return "F:\\ByteDance-web\\byte-web" + "/src/main/resources/mapper/"
 
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
