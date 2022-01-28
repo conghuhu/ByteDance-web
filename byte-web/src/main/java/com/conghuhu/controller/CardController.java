@@ -3,6 +3,7 @@ package com.conghuhu.controller;
 
 import com.conghuhu.entity.Card;
 import com.conghuhu.params.CardDateParam;
+import com.conghuhu.params.CardMoveParam;
 import com.conghuhu.params.CardParam;
 
 import com.conghuhu.params.EditParam;
@@ -123,5 +124,11 @@ public class CardController {
     @PostMapping("/setCardDeadline/{cardId}")
     public JsonResult setCardDeadline(@RequestBody CardDateParam cardDateParam, @PathVariable Long cardId) {
         return cardService.setCardDeadline(cardDateParam, cardId);
+    }
+
+    @ApiOperation(value = "移动卡片", notes = "移动卡片", produces = "application/json")
+    @PostMapping("/moveCard")
+    public JsonResult moveCard(@RequestBody CardMoveParam cardMoveParam){
+        return cardService.moveCard(cardMoveParam);
     }
 }

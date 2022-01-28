@@ -2,6 +2,7 @@ package com.conghuhu.service;
 
 import com.conghuhu.entity.Card;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.conghuhu.params.CardMoveParam;
 import com.conghuhu.params.CardParam;
 import com.conghuhu.params.CardDateParam;
 import com.conghuhu.params.EditParam;
@@ -57,4 +58,10 @@ public interface CardService extends IService<Card> {
      */
     JsonResult setCardDeadline(CardDateParam cardDateParam, Long cardId);
 
+    /**
+     * 移动卡片
+     * @param cardMoveParam
+     * @return
+     */
+    JsonResult moveCard(CardMoveParam cardMoveParam);
 }

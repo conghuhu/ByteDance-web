@@ -34,7 +34,7 @@ public class Product implements Serializable {
     @TableField("ownerId")
     private Long ownerId;
 
-    @ApiModelProperty(value = "0 他人不可见")
+    @ApiModelProperty(value = "1 他人不可见")
     @TableField("isPrivate")
     private Boolean isPrivate;
 

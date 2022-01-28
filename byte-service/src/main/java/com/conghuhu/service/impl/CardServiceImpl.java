@@ -6,6 +6,7 @@ import com.conghuhu.entity.Card;
 import com.conghuhu.entity.Tag;
 import com.conghuhu.mapper.CardMapper;
 
+import com.conghuhu.params.CardMoveParam;
 import com.conghuhu.params.CardParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
@@ -173,6 +174,26 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         card.setBegintime(beginTime);
         card.setDeadline(deadline);
 
+        int res = cardMapper.updateById(card);
+        if (res > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public JsonResult moveCard(CardMoveParam cardMoveParam) {
+        Long cardId = cardMoveParam.getCardId();
+        Float pos = cardMoveParam.getPos();
+        Long listId = cardMoveParam.getListId();
+        Card card = new Card();
+        card.setCardId(cardId);
+        card.setPos(pos);
+        if (listId != null) {
+            // 跨列移动,为null就是同列移动
+            card.setListId(listId);
+        }
         int res = cardMapper.updateById(card);
         if (res > 0) {
             return ResultTool.success();
