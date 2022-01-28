@@ -52,7 +52,9 @@ public class TagController {
         return tagService.removeTagById(id);
     }
 
-    public JsonResult setTagByCardId(){
-        return null;
+    @ApiOperation(value = "根据cardId设置对应的标签", notes = "根据cardId设置对应的标签", produces = "application/json")
+    @PostMapping("/{tagId}/setTagByCardId/{cardId}/")
+    public JsonResult setTagByCardId(@PathVariable Long tagId, @PathVariable Long cardId) {
+        return tagService.setTagByCardId(tagId,cardId);
     }
 }

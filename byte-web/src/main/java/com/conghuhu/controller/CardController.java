@@ -2,22 +2,27 @@ package com.conghuhu.controller;
 
 
 import com.conghuhu.entity.Card;
+import com.conghuhu.params.CardDateParam;
 import com.conghuhu.params.CardParam;
-import com.conghuhu.params.TagParam;
+
+import com.conghuhu.params.EditParam;
+
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author conghuhu
@@ -27,29 +32,32 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/cards")
 public class CardController {
+
     @Autowired
     private CardService cardService;
+
     @ApiOperation(value = "根据卡片id获取卡片信息", notes = "根据卡片id获取卡片信息", produces = "application/json")
     @GetMapping("/querybyid/{cardId}")
-    public JsonResult getCardById(@PathVariable Integer cardId){
-        Card card =cardService.getById(cardId);
-        if(card != null){
+    public JsonResult getCardById(@PathVariable Integer cardId) {
+        Card card = cardService.getById(cardId);
+        if (card != null) {
             return ResultTool.success(card);
-        }else{
+        } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
         }
     }
 
     @ApiOperation(value = "根据卡片名获取卡片信息", notes = "根据卡片名获取卡片信息", produces = "application/json")
     @GetMapping("/querybyname/{cardname}")
-    public JsonResult getCardByName(@PathVariable String cardname){
-        Card card =cardService.getByName(cardname);
-        if(card != null){
+    public JsonResult getCardByName(@PathVariable String cardname) {
+        Card card = cardService.getByName(cardname);
+        if (card != null) {
             return ResultTool.success(card);
-        }else{
+        } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
         }
     }
+
     @ApiOperation(value = "创建新卡片(卡片名字若存在创建失败)", notes = "创建新卡片(卡片名字若存在创建失败)", produces = "application/json")
     @PostMapping("/create")
     public JsonResult createCard(@RequestBody CardParam CardParam) {
@@ -64,8 +72,8 @@ public class CardController {
 
     @ApiOperation(value = "创建新卡片", notes = "创建新卡片", produces = "application/json")
     @PostMapping("/addcard")
-    public JsonResult addcard(@RequestBody CardParam cardParam){
-        Card card =new Card();
+    public JsonResult addcard(@RequestBody CardParam cardParam) {
+        Card card = new Card();
         card.setCardname(cardParam.getCardname());
         card.setDescription(cardParam.getDescription());
         card.setListId(cardParam.getListId());
@@ -76,10 +84,10 @@ public class CardController {
         card.setTag(cardParam.getTag());
         card.setExecutor(cardParam.getExecutor());
         card.setBegintime(LocalDateTime.now());
-        card.setExpire(false);
-        if(cardService.addCard(card)=="success"){
+        card.setExpired(false);
+        if (cardService.addCard(card) == "success") {
             return ResultTool.success();
-        }else{
+        } else {
             return ResultTool.fail();
         }
     }
@@ -94,5 +102,23 @@ public class CardController {
     @GetMapping("/getCardsByListId/{listId}")
     public JsonResult getCardsByListId(@RequestParam("listId") Long listId) {
         return cardService.getCardsByListId(listId);
+    }
+
+    @ApiOperation(value = "编辑卡片的desc", notes = "编辑卡片的desc", produces = "application/json")
+    @PostMapping("/editDescByCardId/{cardId}")
+    public JsonResult editDescByCardId(@RequestBody EditParam editParam, @PathVariable Long cardId) {
+        return cardService.editDescByCardId(editParam, cardId);
+    }
+
+    @ApiOperation(value = "编辑卡片的标题", notes = "编辑卡片的标题", produces = "application/json")
+    @PostMapping("/editCardNameByCardId/{cardId}")
+    public JsonResult editCardNameByCardId(@RequestBody EditParam editParam, @PathVariable Long cardId) {
+        return cardService.editCardNameByCardId(editParam, cardId);
+    }
+
+    @ApiOperation(value = "设置卡片的执行时间", notes = "设置卡片的执行时间", produces = "application/json")
+    @PostMapping("/setCardDeadline/{cardId}")
+    public JsonResult setCardDeadline(@RequestBody CardDateParam cardDateParam, @PathVariable Long cardId) {
+        return cardService.setCardDeadline(cardDateParam, cardId);
     }
 }
