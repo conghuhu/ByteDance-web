@@ -5,38 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3c1b9469-fe56-4553-bf52-349e4487297b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/ByteDance-web.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-api/target/maven-archiver/pom.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-api/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-common/target/maven-archiver/pom.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-common/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/byte-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-service/target/maven-archiver/pom.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-service/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-service/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-service/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/CardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/CardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-common/src/main/java/com/conghuhu/result/ResultCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-common/src/main/java/com/conghuhu/result/ResultCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/service/impl/TagServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-service/src/main/java/com/conghuhu/service/impl/TagServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/CodeGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/TagController.java" beforeDir="false" afterPath="$PROJECT_DIR$/byte-web/src/main/java/com/conghuhu/controller/TagController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/target/byte-web-1.0.jar.original" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/target/maven-archiver/pom.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/byte-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -71,13 +56,16 @@
     <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\ByteDance-web\byte-service\src\main\resources\mapper" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\桌面\BYtance-web\ByteDance-web\byte-service\src\main\resources\mapper" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.conghuhu.entity" />
       <recent name="com.conghuhu.service.impl" />
       <recent name="com.conghuhu.service" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="F:\ByteDance-web\byte-service\src\main\resources\mapper" />
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.SpringBootApplicationMain">

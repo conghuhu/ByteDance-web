@@ -17,6 +17,8 @@ import com.conghuhu.service.TagService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -104,6 +106,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult setTagByCardId(Long tagId, Long cardId) {
         Integer tagCount = tagMapper.selectCount(new LambdaQueryWrapper<Tag>().eq(Tag::getId, tagId));
@@ -123,9 +126,15 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
             return ResultTool.success();
         }
         int res = cardTagMapper.insert(cardTag);
-        if (res > 0) {
+        Card card = new Card();
+        card.setCardId(cardId);
+        card.setTag(true);
+        int cardRes = cardMapper.updateById(card);
+        if (res > 0 && cardRes > 0) {
             return ResultTool.success();
         } else {
+            // 手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ResultTool.fail();
         }
     }
