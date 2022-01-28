@@ -100,7 +100,7 @@ public class CardController {
 
     @ApiOperation(value = "获取当前列的卡片", notes = "获取当前列的卡片", produces = "application/json")
     @GetMapping("/getCardsByListId/{listId}")
-    public JsonResult getCardsByListId(@RequestParam("listId") Long listId) {
+    public JsonResult getCardsByListId(@PathVariable Long listId) {
         return cardService.getCardsByListId(listId);
     }
 
