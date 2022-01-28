@@ -1,6 +1,0 @@
-{
-  "timestamp": "2022-01-25T08:00:52.354+00:00",
-  "status": 401,
-  "error": "Unauthorized",
-  "path": "/users/1"
-}

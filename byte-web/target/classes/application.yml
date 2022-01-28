@@ -1,5 +1,0 @@
-spring:
-  application:
-    name: byte-service
-  profiles:
-    active: dev

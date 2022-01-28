@@ -26,5 +26,5 @@ public class CardParam {
     private Boolean executor;
     private LocalDateTime begintime;
 
-    private Boolean expire;
+    private Boolean expired;
 }
