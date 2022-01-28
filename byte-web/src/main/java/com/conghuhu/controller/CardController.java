@@ -96,7 +96,7 @@ public class CardController {
     }
 
     @ApiOperation(value = "根据id删除对应的卡片", notes = "根据id删除对应的卡片", produces = "application/json")
-    @PostMapping("/removeCardById/{cardId}")
+    @DeleteMapping("/removeCardById/{cardId}")
     public JsonResult removeCardById(@PathVariable Long cardId) {
         return cardService.removeCardById(cardId);
     }

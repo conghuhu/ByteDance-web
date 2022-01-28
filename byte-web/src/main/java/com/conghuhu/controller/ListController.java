@@ -43,7 +43,7 @@ public class ListController {
     }
 
     @ApiOperation(value = "删除列", notes = "删除列", produces = "application/json")
-    @PostMapping("/removeList/{listId}")
+    @DeleteMapping("/removeList/{listId}")
     public JsonResult removeList(@PathVariable Long listId) {
         return listService.closeList(listId);
     }

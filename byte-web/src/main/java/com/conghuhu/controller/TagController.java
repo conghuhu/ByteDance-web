@@ -48,7 +48,7 @@ public class TagController {
     }
 
     @ApiOperation(value = "根据id删除对应的标签", notes = "根据id删除对应的标签", produces = "application/json")
-    @PostMapping("/removeTagById/{id}")
+    @DeleteMapping("/removeTagById/{id}")
     public JsonResult removeTagById(@PathVariable Long id) {
         return tagService.removeTagById(id);
     }
