@@ -1,6 +1,6 @@
 package com.conghuhu.service;
 
-import com.conghuhu.entity.List;
+import com.conghuhu.entity.CardTag;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author conghuhu
- * @since 2022-01-26
+ * @since 2022-01-27
  */
-public interface ListService extends IService<List> {
+public interface CardTagService extends IService<CardTag> {
 
 }

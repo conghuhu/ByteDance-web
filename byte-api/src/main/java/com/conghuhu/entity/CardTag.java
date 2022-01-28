@@ -3,9 +3,11 @@ package com.conghuhu.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,33 +19,29 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author conghuhu
- * @since 2022-01-26
+ * @since 2022-01-27
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("byte_product")
-@ApiModel(value="Product对象", description="")
-public class Product implements Serializable {
+@TableName("byte_card_tag")
+@ApiModel(value="CardTag对象", description="")
+public class CardTag implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @TableField("ownerId")
-    private Long ownerId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "卡片id")
+    @TableField("cardId")
+    private Long cardId;
 
-    @ApiModelProperty(value = "0 他人不可见")
-    @TableField("isPrivate")
-    private Boolean isPrivate;
-
-    private String productname;
-
-    private String desc;
-
-    private String background;
-
-    private LocalDateTime createdTime;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "标签id")
+    @TableField("tagId")
+    private Long tagId;
 
 
 }

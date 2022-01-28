@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author conghuhu
- * @since 2022-01-26
+ * @since 2022-01-27
  */
 @RestController
-@RequestMapping("/card")
-public class CardController {
+@RequestMapping("/card-tag")
+public class CardTagController {
 
 }
