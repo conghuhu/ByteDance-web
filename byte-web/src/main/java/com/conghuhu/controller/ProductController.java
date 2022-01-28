@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/product")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @ApiOperation(value = "创建新任务", notes = "创建新任务", produces = "application/json")
     @RequestMapping("/create")

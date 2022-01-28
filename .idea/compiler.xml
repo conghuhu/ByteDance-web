@@ -9,9 +9,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="byte-api" />
+        <module name="byte-service" />
         <module name="byte-common" />
         <module name="byte-web" />
-        <module name="byte-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8" />

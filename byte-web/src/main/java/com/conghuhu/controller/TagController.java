@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/tag")
 public class TagController {
+
     private final TagService tagService;
 
     public TagController(TagService tagService) {
@@ -55,6 +56,6 @@ public class TagController {
     @ApiOperation(value = "根据cardId设置对应的标签", notes = "根据cardId设置对应的标签", produces = "application/json")
     @PostMapping("/{tagId}/setTagByCardId/{cardId}/")
     public JsonResult setTagByCardId(@PathVariable Long tagId, @PathVariable Long cardId) {
-        return tagService.setTagByCardId(tagId,cardId);
+        return tagService.setTagByCardId(tagId, cardId);
     }
 }

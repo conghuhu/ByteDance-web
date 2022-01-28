@@ -33,8 +33,11 @@ import java.time.LocalDateTime;
 @RequestMapping("/cards")
 public class CardController {
 
-    @Autowired
-    private CardService cardService;
+    private final CardService cardService;
+
+    public CardController(CardService cardService) {
+        this.cardService = cardService;
+    }
 
     @ApiOperation(value = "根据卡片id获取卡片信息", notes = "根据卡片id获取卡片信息", produces = "application/json")
     @GetMapping("/querybyid/{cardId}")
