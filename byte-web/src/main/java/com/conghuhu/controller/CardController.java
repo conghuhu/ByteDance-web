@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -105,8 +106,7 @@ public class CardController {
 
     @ApiOperation(value = "获取当前列的卡片", notes = "获取当前列的卡片", produces = "application/json")
     @GetMapping("/getCardsByListId/{listId}")
-    public JsonResult getCardsByListId(@PathVariable("listId") Long listId) {
-
+    public JsonResult<List<Card>> getCardsByListId(@PathVariable("listId") Long listId) {
         return cardService.getCardsByListId(listId);
     }
 

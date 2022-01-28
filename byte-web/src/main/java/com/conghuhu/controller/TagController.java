@@ -1,6 +1,7 @@
 package com.conghuhu.controller;
 
 
+import com.conghuhu.entity.Tag;
 import com.conghuhu.params.TagParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.service.TagService;
@@ -9,6 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -43,7 +46,7 @@ public class TagController {
 
     @ApiOperation(value = "获取当前项目的标签", notes = "获取当前项目的标签", produces = "application/json")
     @GetMapping("/getTagsByProductId")
-    public JsonResult getTagsByProductId(@RequestParam("productId") Long productId) {
+    public JsonResult<List<Tag>> getTagsByProductId(@RequestParam("productId") Long productId) {
         return tagService.getTagsByProductId(productId);
     }
 

@@ -13,7 +13,7 @@ import java.util.List;
  * @create 2022-01-28 16:54
  */
 @Data
-public class ProductInitShowVO {
+public class ProductInitShowVo {
 
     private List<Card> cardList;
 

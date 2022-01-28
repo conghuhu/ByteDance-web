@@ -55,6 +55,7 @@ public enum ResultCode {
     CARD_ID_NOT_CONSIST(21005, "cardId有误，请检查"),
 
     /* 项目错误 */
+    PRODUCT_CONSIST(21000, "项目名称已存在，请更改"),
     PRODUCT_NOT_CONSIST(22000, "项目不存在，检查productId"),
 
     /* 业务错误 */
