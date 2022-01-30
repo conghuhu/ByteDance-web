@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.conghuhu.entity.User;
 import com.conghuhu.mapper.UserMapper;
 import com.conghuhu.service.UserService;
+import com.conghuhu.utils.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,12 +33,14 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("开始登录验证,用户名为："+username);
+        log.info("开始登录验证,用户名为：" + username);
         User user = userMapper.getByUserName(username);
-        log.info("数据库中找到User："+user);
-        if(user == null){
+        log.info("数据库中找到User：" + user);
+        if (user == null) {
             throw new UsernameNotFoundException("用户名不存在，登录失败");
         }
+        // 存到UserThreadLocal中，后续拦截器使用
+        UserThreadLocal.put(user);
 
         UserDetail userDetail = new UserDetail();
         userDetail.setUser(user);

@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     private final MyUserDetailsService myUserDetailsService;
     /**
      * 匿名用户访问无权限资源时的异常
@@ -58,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessHandler(userLogoutSuccessHandler)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint) //匿名用户访问无权限资源时的异常处理
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
         ;
         http
                 .addFilter(new TokenAuthenticationFilter(authenticationManager())).httpBasic();
@@ -96,7 +97,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("api/**", "/swagger-ui.html", "/swagger**/**", "/webjars/**", "/v2/**", "/register");
+        web.ignoring().antMatchers("api/**",
+                "/swagger-ui.html",
+                "/swagger**/**",
+                "/webjars/**",
+                "/v2/**",
+                "/register");
     }
 
 }

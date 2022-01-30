@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 public class ProductInitShowVo {
 
-    private List<Card> cardList;
+    private List<CardVo> cardList;
 
     private List<Tag> tagList;
 
@@ -26,5 +26,7 @@ public class ProductInitShowVo {
     private Boolean isPrivate;
 
     private LocalDateTime createdTime;
+
+    private List<UserVo> memberList;
 
 }

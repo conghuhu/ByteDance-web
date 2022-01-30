@@ -2,4 +2,4 @@ spring:
   application:
     name: byte-service
   profiles:
-    active: prod
+    active: dev

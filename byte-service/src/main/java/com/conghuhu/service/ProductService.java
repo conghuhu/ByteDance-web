@@ -3,8 +3,10 @@ package com.conghuhu.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.conghuhu.entity.Product;
 import com.conghuhu.params.CreateProductParam;
+import com.conghuhu.params.InviteParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.vo.ProductInitShowVo;
+import com.conghuhu.vo.UserVo;
 
 import java.util.List;
 
@@ -42,4 +44,36 @@ public interface ProductService extends IService<Product> {
      */
     JsonResult<List<Product>> getProductByUserId(Long userId);
 
+    /**
+     * 设置项目的背景
+     *
+     * @param productId
+     * @param background
+     * @return
+     */
+    JsonResult setProductBackground(Long productId, String background);
+
+    /**
+     * 邀请用户
+     *
+     * @param inviteParam
+     * @return
+     */
+    JsonResult inviteUser(InviteParam inviteParam);
+
+    /**
+     * 获取项目成员列表
+     *
+     * @param productId
+     * @return
+     */
+    List<UserVo> getMemberList(Long productId);
+
+    /**
+     * 根据id删除项目
+     *
+     * @param id
+     * @return
+     */
+    JsonResult deleteProductById(Long id);
 }

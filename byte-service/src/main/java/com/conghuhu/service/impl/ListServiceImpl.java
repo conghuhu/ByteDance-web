@@ -119,4 +119,15 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
             return ResultTool.fail();
         }
     }
+
+    @Override
+    public JsonResult removeList(Long listId) {
+        int delete = listMapper.deleteById(listId);
+        // 删除列后还应将其中的card删除，包含card关联的数据（待开发）
+        if (delete > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
 }

@@ -2,11 +2,12 @@ package com.conghuhu.service;
 
 import com.conghuhu.entity.Card;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.conghuhu.params.CardMoveParam;
-import com.conghuhu.params.CardParam;
-import com.conghuhu.params.CardDateParam;
-import com.conghuhu.params.EditParam;
+import com.conghuhu.entity.Tag;
+import com.conghuhu.params.*;
 import com.conghuhu.result.JsonResult;
+import com.conghuhu.vo.UserVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,7 +19,6 @@ import com.conghuhu.result.JsonResult;
  */
 public interface CardService extends IService<Card> {
 
-    String addCard(Card card);
 
     Card getByName(String cardname);
 
@@ -27,7 +27,7 @@ public interface CardService extends IService<Card> {
 
     JsonResult createTag(CardParam cardParam);
 
-    JsonResult updateTag(CardParam cardParam);
+    JsonResult updateTag(Card cardParam);
 
     JsonResult getCardsByListId(Long listId);
 
@@ -60,8 +60,34 @@ public interface CardService extends IService<Card> {
 
     /**
      * 移动卡片
+     *
      * @param cardMoveParam
      * @return
      */
     JsonResult moveCard(CardMoveParam cardMoveParam);
+
+    /**
+     * 通过cardId获取其所有标签
+     *
+     * @param cardId
+     * @return
+     */
+    List<Tag> getTagsByCardId(Long cardId);
+
+    /**
+     * 设置卡片的执行者
+     *
+     * @param executorParam
+     * @param cardId
+     * @return
+     */
+    JsonResult setExecutor(ExecutorParam executorParam, Long cardId);
+
+    /**
+     * 通过cardId获取其所有执行者
+     *
+     * @param cardId
+     * @return
+     */
+    List<UserVo> getExecutorsByCardId(Long cardId);
 }

@@ -5,6 +5,7 @@ import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.utils.JwtTokenUtil;
 import com.conghuhu.utils.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @author conghuhu
  * @create 2021-10-11 16:19
  */
+@Slf4j
 @Component
 public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -51,15 +53,15 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
         UserDetail jwtUser = (UserDetail) authentication.getPrincipal();
 
-        String token = jwtUtils.createToken(jwtUser.getUsername(),password);
+        String token = jwtUtils.createToken(jwtUser.getUsername(), password);
 
-        System.out.println("存储到redis的信息"+JSON.toJSONString(jwtUser));
+        log.info("存储到redis的信息" + JSON.toJSONString(jwtUser));
 
-        stringRedisTemplate.opsForValue().set("Token_"+token, JSON.toJSONString(jwtUser.getUser()),1, TimeUnit.DAYS);
+        stringRedisTemplate.opsForValue().set("Token_" + token, JSON.toJSONString(jwtUser.getUser()), 1, TimeUnit.DAYS);
 
-        HashMap<Object,Object> map = new HashMap<>(2);
-        map.put("token",token);
-        map.put("username",jwtUser.getUsername());
+        HashMap<Object, Object> map = new HashMap<>(2);
+        map.put("token", token);
+        map.put("username", jwtUser.getUsername());
         //返回json数据
         JsonResult result = ResultTool.success(map);
         //处理编码方式，防止中文乱码的情况

@@ -45,7 +45,7 @@ public class ListController {
     @ApiOperation(value = "删除列", notes = "删除列", produces = "application/json")
     @DeleteMapping("/removeList/{listId}")
     public JsonResult removeList(@PathVariable Long listId) {
-        return listService.closeList(listId);
+        return listService.removeList(listId);
     }
 
     @ApiOperation(value = "编辑列名称", notes = "编辑列名称", produces = "application/json")

@@ -40,6 +40,7 @@ public enum ResultCode {
     USER_ACCOUNT_NOT_EXIST(2007, "账号不存在"),
     USER_ACCOUNT_ALREADY_EXIST(2008, "账号已存在"),
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
+    INVITE_USER_NOT_CONSIST(2010, "邀请者用户Id不存在，请检查"),
 
     /* 查询错误 */
     NOT_FOUND(20010, "查询无果"),
@@ -51,12 +52,13 @@ public enum ResultCode {
 
     /* 卡片错误 */
     CARD_CONSIST(21000, "卡片已存在"),
-
     CARD_ID_NOT_CONSIST(21005, "cardId有误，请检查"),
 
     /* 项目错误 */
     PRODUCT_CONSIST(21000, "项目名称已存在，请更改"),
     PRODUCT_NOT_CONSIST(22000, "项目不存在，检查productId"),
+    PRODUCT_PARAM_ERROR(23000, "项目参数有误，请检查"),
+    PRODUCT_NOT_PERMISSION(70000, "用户没有该项目的权限"),
 
     /* 业务错误 */
     NO_PERMISSION(70001, "没有权限");

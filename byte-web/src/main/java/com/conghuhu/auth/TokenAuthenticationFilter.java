@@ -39,6 +39,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.info("=================" + request.getRequestURI());
+
         //不需要鉴权
         if (request.getRequestURI().contains("login")) {
             chain.doFilter(request, response);
@@ -68,7 +69,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         if (!StringUtils.hasText(token)) {
             token = request.getParameter("token");
         }
-        log.info("token为:" + token);
+//        log.info("token为:" + token);
         if (token != null && !"".equals(token.trim())) {
             // 从Token中解密获取用户名
             String userName = JwtTokenUtil.getUserNameFromToken(token);

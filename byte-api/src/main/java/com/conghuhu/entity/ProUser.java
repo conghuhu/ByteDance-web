@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,33 +15,36 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author conghuhu
- * @since 2022-01-27
+ * @since 2022-01-30
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("byte_tag")
-@ApiModel(value="Tag对象", description="")
-public class Tag implements Serializable {
+@TableName("byte_pro_user")
+@ApiModel(value = "ProUser对象", description = "")
+public class ProUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "项目id")
     @TableField("productId")
     private Long productId;
 
-    @TableField("tagName")
-    private String tagName;
+    @ApiModelProperty(value = "用户id")
+    @TableField("userId")
+    private Long userId;
 
-    @TableField("color")
-    private String color;
+    @ApiModelProperty(value = "邀请人id")
+    @TableField("inviteUserId")
+    private Long inviteUserId;
 
-
+    @ApiModelProperty(value = "创建时间")
+    @TableField("createdTime")
+    private LocalDateTime createdTime;
 }

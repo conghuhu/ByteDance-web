@@ -7,11 +7,13 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.entity.User;
 import com.conghuhu.service.UserService;
-import com.conghuhu.service.impl.UserServiceImpl;
+import com.conghuhu.utils.AESUtil;
+import com.conghuhu.utils.HexConversion;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * <p>
@@ -55,5 +57,28 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "获取当前用户的邀请码", notes = "获取当前用户的邀请码", produces = "application/json")
+    @GetMapping("/getInviteCode/{userId}")
+    public JsonResult getInviteCode(@PathVariable Long userId) throws Exception {
+        String s = String.valueOf(userId);
+        String secret = userService.getInviteCode(s, "cong0917");
+        if (!secret.equals("") && secret != null) {
+            return ResultTool.success(secret);
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @ApiOperation(value = "根据邀请码获取邀请者Id", notes = "根据邀请码获取邀请者Id", produces = "application/json")
+    @GetMapping("/getUserIdByInviteCode/{inviteCode}")
+    public JsonResult getUserIdByInviteCode(@PathVariable String inviteCode) {
+        String userId = null;
+        userId = userService.getUserIdByInviteCode(inviteCode, "cong0917");
+        if (!userId.equals("") && userId != null) {
+            return ResultTool.success(userId);
+        } else {
+            return ResultTool.fail();
+        }
+    }
 
 }

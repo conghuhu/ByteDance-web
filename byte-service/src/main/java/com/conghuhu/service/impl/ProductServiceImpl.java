@@ -2,24 +2,27 @@ package com.conghuhu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.conghuhu.entity.Card;
-import com.conghuhu.entity.Product;
-import com.conghuhu.entity.Tag;
-import com.conghuhu.mapper.CardMapper;
-import com.conghuhu.mapper.ListMapper;
-import com.conghuhu.mapper.ProductMapper;
-import com.conghuhu.mapper.TagMapper;
+import com.conghuhu.entity.*;
+import com.conghuhu.mapper.*;
 import com.conghuhu.params.CreateProductParam;
+import com.conghuhu.params.InviteParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
+import com.conghuhu.service.CardService;
 import com.conghuhu.service.ProductService;
+import com.conghuhu.service.UserService;
+import com.conghuhu.vo.CardVo;
 import com.conghuhu.vo.ProductInitShowVo;
+import com.conghuhu.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -32,6 +35,10 @@ import java.util.List;
 @Service
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
 
+    private final ProUserMapper proUserMapper;
+
+    private final CardService cardService;
+
     private final ListMapper listMapper;
 
     private final CardMapper cardMapper;
@@ -40,11 +47,22 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(TagMapper tagMapper, ListMapper listMapper, CardMapper cardMapper, ProductMapper productMapper) {
+    private final UserService userService;
+
+    private final UserMapper userMapper;
+
+    public ProductServiceImpl(TagMapper tagMapper, ListMapper listMapper,
+                              CardMapper cardMapper, ProductMapper productMapper,
+                              CardService cardService, ProUserMapper proUserMapper,
+                              UserService userService, UserMapper userMapper) {
         this.tagMapper = tagMapper;
         this.listMapper = listMapper;
         this.cardMapper = cardMapper;
         this.productMapper = productMapper;
+        this.cardService = cardService;
+        this.proUserMapper = proUserMapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -62,15 +80,38 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
         List<com.conghuhu.entity.List> lists = listMapper.selectList(new LambdaQueryWrapper<com.conghuhu.entity.List>().eq(com.conghuhu.entity.List::getProductId, productId));
 
+        // 过滤掉closed
+        List<CardVo> cardVoList = cardList.parallelStream()
+                .filter(item -> !item.getClosed())
+                .filter(item -> item.getTag() || item.getExecutor()).map(item -> {
+                    CardVo cardVo = new CardVo();
+                    BeanUtils.copyProperties(item, cardVo);
+                    List<Tag> tags = null;
+                    List<UserVo> executorList = null;
+                    Long cardId = item.getCardId();
+                    if (item.getTag()) {
+                        tags = cardMapper.getTagsByCardId(cardId);
+                    }
+                    if (item.getExecutor()) {
+                        executorList = cardService.getExecutorsByCardId(cardId);
+                    }
+                    cardVo.setTagList(tags);
+                    cardVo.setExecutorList(executorList);
+                    return cardVo;
+                }).collect(Collectors.toList());
+
+        List<UserVo> memberList = getMemberList(productId);
         showVO.setProductName(product.getProductName());
-        showVO.setCardList(cardList);
+        showVO.setCardList(cardVoList);
         showVO.setTagList(tagList);
         showVO.setLists(lists);
         showVO.setIsPrivate(product.getIsPrivate());
         showVO.setCreatedTime(product.getCreatedTime());
+        showVO.setMemberList(memberList);
         return showVO;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult<Product> createProduct(CreateProductParam productParam) {
         Product product = new Product();
@@ -80,9 +121,16 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
         BeanUtils.copyProperties(productParam, product);
         int res = productMapper.insert(product);
-        if (res > 0) {
+        ProUser proUser = new ProUser();
+        proUser.setProductId(product.getId());
+        proUser.setUserId(product.getOwnerId());
+        proUser.setCreatedTime(LocalDateTime.now());
+        int insert = proUserMapper.insert(proUser);
+        if (res > 0 && insert > 0) {
             return ResultTool.success(product);
         } else {
+            // 手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ResultTool.fail();
         }
     }
@@ -94,6 +142,67 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         if (productList != null) {
             return ResultTool.success(productList);
         } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public JsonResult setProductBackground(Long productId, String background) {
+        Product product = new Product();
+        product.setId(productId);
+        product.setBackground(background);
+        int res = productMapper.updateById(product);
+        if (res > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public JsonResult inviteUser(InviteParam inviteParam) {
+        ProUser proUser = new ProUser();
+        String secret = inviteParam.getSecret();
+        Long productId = inviteParam.getProductId();
+        Long inviteUserId = Long.valueOf(userService.getUserIdByInviteCode(secret, "cong0917"));
+        Integer selectProductCount = productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getId, productId));
+        if (selectProductCount <= 0) {
+            return ResultTool.fail(ResultCode.PRODUCT_NOT_CONSIST);
+        }
+        Integer selectInviteUserCount = productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getOwnerId, inviteUserId));
+        // 必须项目的 Owner 才有资格邀请他人
+        if (selectInviteUserCount <= 0) {
+            return ResultTool.fail(ResultCode.INVITE_USER_NOT_CONSIST);
+        }
+        proUser.setCreatedTime(LocalDateTime.now());
+        proUser.setUserId(inviteParam.getUserId());
+        proUser.setProductId(productId);
+        proUser.setInviteUserId(inviteUserId);
+        int res = proUserMapper.insert(proUser);
+        if (res > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public List<UserVo> getMemberList(Long productId) {
+        List<UserVo> memberList = proUserMapper.getMemberList(productId);
+        return memberList;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public JsonResult deleteProductById(Long id) {
+        int delete = productMapper.deleteById(id);
+        proUserMapper.delete(new LambdaQueryWrapper<ProUser>().eq(ProUser::getProductId, id));
+        // 还应删除对应的card以及相关的关联
+        if (delete > 0) {
+            return ResultTool.success();
+        } else {
+            // 手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ResultTool.fail();
         }
     }

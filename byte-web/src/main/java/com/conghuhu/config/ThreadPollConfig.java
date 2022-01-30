@@ -14,7 +14,7 @@ import java.util.concurrent.Executor;
  * @create 2021-10-12 19:36
  */
 @Configuration
-@EnableAsync // 开启多线程
+@EnableAsync
 public class ThreadPollConfig {
     @Bean("taskExecutor")
     public Executor asyncServiceExecutor() {

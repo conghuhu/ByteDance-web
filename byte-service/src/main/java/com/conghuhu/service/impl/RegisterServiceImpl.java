@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -43,6 +44,7 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult register(RegisterParam registerParam) {
         /**
@@ -56,11 +58,13 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         String password = registerParam.getPassword();
         String verifyCode = registerParam.getVerifyCode();
         String fullName = registerParam.getFullName();
-
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
         User user = userService.getByUserName(username);
-        if(user != null){
+        if (user != null) {
             return ResultTool.fail(ResultCode.ACCOUNT_EXIST);
-        }else{
+        } else {
             User newUser = new User();
             newUser.setUsername(username);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -70,8 +74,8 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
             newUser.setFullname(fullName);
             newUser.setAvatar("https://joeschmoe.io/api/v1/random");
             this.userService.save(newUser);
-            String token = jwtUtils.createToken(username,password);
-            stringRedisTemplate.opsForValue().set("Token_"+token, JSON.toJSONString(newUser),1, TimeUnit.DAYS);
+            String token = jwtUtils.createToken(username, password);
+            stringRedisTemplate.opsForValue().set("Token_" + token, JSON.toJSONString(newUser), 1, TimeUnit.DAYS);
 
             return ResultTool.success(token);
         }

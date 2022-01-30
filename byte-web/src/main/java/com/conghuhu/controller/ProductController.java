@@ -3,11 +3,13 @@ package com.conghuhu.controller;
 
 import com.conghuhu.entity.Product;
 import com.conghuhu.params.CreateProductParam;
+import com.conghuhu.params.InviteParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.ProductService;
 import com.conghuhu.vo.ProductInitShowVo;
+import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -41,13 +43,8 @@ public class ProductController {
 
     @ApiOperation(value = "删除任务", notes = "删除任务", produces = "application/json")
     @DeleteMapping("/delete")
-    public JsonResult deleteProduct(@RequestParam(name = "id") String id) {
-        boolean save = productService.removeById(id);
-        if (save) {
-            return ResultTool.success(ResultCode.SUCCESS);
-        } else {
-            return ResultTool.fail(ResultCode.COMMON_FAIL);
-        }
+    public JsonResult deleteProduct(@RequestParam(name = "id") Long id) {
+        return productService.deleteProductById(id);
     }
 
     @ApiOperation(value = "获取项目页面初始渲染数据", notes = "获取项目页面初始渲染数据", produces = "application/json")
@@ -66,4 +63,28 @@ public class ProductController {
     public JsonResult<List<Product>> getProductByUserId(@PathVariable Long userId) {
         return productService.getProductByUserId(userId);
     }
+
+    @ApiOperation(value = "设置项目的背景", notes = "设置项目的背景", produces = "application/json")
+    @PostMapping("/setProductBackground/{productId}")
+    public JsonResult setProductBackground(@RequestParam("background") String background, @PathVariable Long productId) {
+        return productService.setProductBackground(productId, background);
+    }
+
+    @ApiOperation(value = "他人受邀加入项目", notes = "他人受邀加入项目", produces = "application/json")
+    @PostMapping("/invite")
+    public JsonResult inviteUser(@RequestBody InviteParam inviteParam) {
+        return productService.inviteUser(inviteParam);
+    }
+
+    @ApiOperation(value = "获取项目成员列表", notes = "获取项目成员列表", produces = "application/json")
+    @GetMapping("/getMemberList/{productId}")
+    public JsonResult<List<UserVo>> getMemberList(@PathVariable Long productId) {
+        List<UserVo> memberList = productService.getMemberList(productId);
+        if (memberList != null) {
+            return ResultTool.success(memberList);
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
 }

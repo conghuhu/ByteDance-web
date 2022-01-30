@@ -2,23 +2,20 @@ package com.conghuhu.controller;
 
 
 import com.conghuhu.entity.Card;
-import com.conghuhu.params.CardDateParam;
-import com.conghuhu.params.CardMoveParam;
-import com.conghuhu.params.CardParam;
-
-import com.conghuhu.params.EditParam;
+import com.conghuhu.params.*;
 
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 
+import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -33,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/cards")
 public class CardController {
+
 
     private final CardService cardService;
 
@@ -65,38 +63,16 @@ public class CardController {
 
     @ApiOperation(value = "创建新卡片(卡片名字若存在创建失败)", notes = "创建新卡片(卡片名字若存在创建失败)", produces = "application/json")
     @PostMapping("/create")
-    public JsonResult createCard(@RequestBody CardParam CardParam) {
+    public JsonResult<Card> createCard(@RequestBody CardParam CardParam) {
         return cardService.createTag(CardParam);
     }
 
     @ApiOperation(value = "修改卡片", notes = "修改卡片", produces = "application/json")
     @PostMapping("/modify")
-    public JsonResult updateCard(@RequestBody CardParam CardParam) {
+    public JsonResult updateCard(@RequestBody Card CardParam) {
         return cardService.updateTag(CardParam);
     }
 
-    @ApiOperation(value = "创建新卡片", notes = "创建新卡片", produces = "application/json")
-    @PostMapping("/addCard")
-    public JsonResult addcard(@RequestBody CardParam cardParam) {
-        Card card = new Card();
-        card.setCardname(cardParam.getCardname());
-        card.setDescription(cardParam.getDescription());
-        card.setListId(cardParam.getListId());
-        card.setProductId(cardParam.getProductId());
-        card.setClosed(false);
-        card.setPos(cardParam.getPos());
-        card.setDeadline(LocalDateTime.now());
-        card.setTag(cardParam.getTag());
-        card.setExecutor(cardParam.getExecutor());
-        card.setBegintime(LocalDateTime.now());
-        card.setExpired(false);
-
-        if (cardService.addCard(card) == "success") {
-            return ResultTool.success();
-        } else {
-            return ResultTool.fail();
-        }
-    }
 
     @ApiOperation(value = "根据id删除对应的卡片", notes = "根据id删除对应的卡片", produces = "application/json")
     @DeleteMapping("/removeCardById/{cardId}")
@@ -132,5 +108,11 @@ public class CardController {
     @PostMapping("/moveCard")
     public JsonResult moveCard(@RequestBody CardMoveParam cardMoveParam) {
         return cardService.moveCard(cardMoveParam);
+    }
+
+    @ApiOperation(value = "设置卡片的执行人", notes = "设置卡片的执行人", produces = "application/json")
+    @PostMapping("/setExecutor/{cardId}")
+    public JsonResult<List<UserVo>> setExecutor(@RequestBody ExecutorParam executorParam, @PathVariable Long cardId) {
+        return cardService.setExecutor(executorParam, cardId);
     }
 }

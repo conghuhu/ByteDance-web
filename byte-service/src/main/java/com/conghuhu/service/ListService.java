@@ -55,4 +55,11 @@ public interface ListService extends IService<List> {
      * @return
      */
     JsonResult moveList(ListMoveParam listMoveParam);
+
+    /**
+     * 删除列
+     * @param listId
+     * @return
+     */
+    JsonResult removeList(Long listId);
 }

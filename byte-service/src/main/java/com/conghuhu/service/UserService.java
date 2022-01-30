@@ -33,4 +33,21 @@ public interface UserService extends IService<User> {
      * @return
      */
     UserVo findUserVoById(Long id);
+
+    /**
+     * 根据id生成邀请码
+     * @param s
+     * @param password
+     * @return
+     */
+    String getInviteCode(String s, String password);
+
+    /**
+     * 根据邀请码获取userId
+     * @param inviteCode
+     * @param password
+     * @return
+     */
+    String getUserIdByInviteCode(String inviteCode, String password);
+
 }
