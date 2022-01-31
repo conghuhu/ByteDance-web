@@ -11,10 +11,14 @@ import lombok.Data;
 @Data
 public class UserVo {
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long userId;
+
     private String username;
 
     private String avatar;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
+    private String fullName;
+
+
 }

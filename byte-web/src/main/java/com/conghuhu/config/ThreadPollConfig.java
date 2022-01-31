@@ -8,11 +8,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 /**
+ * 使用方法：在需要异步的方法上加@Async注解
+ *
  * @author conghuhu
  * @create 2021-10-12 19:36
  */
 @Configuration
-@EnableAsync // 开启多线程
+@EnableAsync
 public class ThreadPollConfig {
     @Bean("taskExecutor")
     public Executor asyncServiceExecutor() {
@@ -26,7 +28,7 @@ public class ThreadPollConfig {
         // 设置线程活跃时间（秒）
         executor.setKeepAliveSeconds(60);
         // 设置默认线程名称
-        executor.setThreadNamePrefix("conghuhu博客项目");
+        executor.setThreadNamePrefix("byte-web多线程");
         // 等待所有任务结束后再关闭线程池
         executor.setWaitForTasksToCompleteOnShutdown(true);
         //执行初始化

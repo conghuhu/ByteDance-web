@@ -1,9 +1,6 @@
 package com.conghuhu.utils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.CompressionCodecs;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -38,7 +35,7 @@ public class JwtTokenUtil {
 //        return token;
 //    }
 
-    public static String getUserNameFromToken(String token) {
+    public static String getUserNameFromToken(String token) throws ExpiredJwtException {
         String userName = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody().getSubject();
         return userName;
     }

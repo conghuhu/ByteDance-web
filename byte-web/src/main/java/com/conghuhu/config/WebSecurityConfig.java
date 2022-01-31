@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     private final MyUserDetailsService myUserDetailsService;
     /**
      * 匿名用户访问无权限资源时的异常
@@ -58,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessHandler(userLogoutSuccessHandler)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint) //匿名用户访问无权限资源时的异常处理
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
         ;
         http
                 .addFilter(new TokenAuthenticationFilter(authenticationManager())).httpBasic();
@@ -75,7 +78,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 配置认证方式和加密器
-        auth.userDetailsService(myUserDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(myUserDetailsService)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -83,6 +87,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
+
+//    @Bean
+//    public AuthenticationProvider daoAuthenticationProvider() {
+//        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+//        daoAuthenticationProvider.setUserDetailsService(myUserDetailsService);
+//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+//        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
+//        return daoAuthenticationProvider;
+//    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -96,7 +110,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("api/**", "/swagger**/**", "/webjars/**", "/v2/**","/register");
+        web.ignoring().antMatchers("api/**",
+                "/swagger-ui.html",
+                "/swagger**/**",
+                "/webjars/**",
+                "/v2/**",
+                "/register");
     }
 
 }

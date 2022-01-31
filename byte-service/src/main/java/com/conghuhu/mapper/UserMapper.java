@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author conghuhu
@@ -18,5 +18,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
+
     User getByUserName(@Param("username") String name);
+
+    String getUserNameById(Long userId);
 }

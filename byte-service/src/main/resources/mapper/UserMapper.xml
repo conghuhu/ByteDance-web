@@ -2,6 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.conghuhu.mapper.UserMapper">
     <select id="getByUserName" resultType="com.conghuhu.entity.User">
-        select * from byte_user where username=#{username} limit 1;
+        select *
+        from byte_user
+        where username = #{username};
+    </select>
+    <select id="getUserNameById" parameterType="long" resultType="string">
+        select fullname
+        from byte_user
+        where userId = #{userId}
     </select>
 </mapper>

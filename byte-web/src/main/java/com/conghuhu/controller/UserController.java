@@ -7,15 +7,18 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.entity.User;
 import com.conghuhu.service.UserService;
-import com.conghuhu.service.impl.UserServiceImpl;
+import com.conghuhu.utils.AESUtil;
+import com.conghuhu.utils.HexConversion;
+import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author conghuhu
@@ -25,30 +28,58 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
 
-    @ApiOperation("查询用户")
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @ApiOperation(value = "查询用户", notes = "查询用户", produces = "application/json")
     @GetMapping("/{id}")
-    public JsonResult getUserById(@PathVariable Integer id){
+    public JsonResult<User> getUserById(@PathVariable Integer id) {
         User user = userService.getById(id);
-        if(user != null){
+        if (user != null) {
             return ResultTool.success(user);
-        }else{
+        } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
         }
     }
 
-    @Cache(expire = 2 * 60 * 1000,name = "currentUser")
+    @ApiOperation(value = "根据token查询当前用户", notes = "查询当前用户", produces = "application/json")
+    @Cache(expire = 2 * 60 * 1000, name = "currentUser")
     @GetMapping("/currentUser")
-    public JsonResult getCurrentUser(@RequestHeader("token") String token){
-        User user = userService.findUserByToken(token);
-        if(user != null){
+    public JsonResult<UserVo> getCurrentUser(@RequestHeader("token") String token) {
+        UserVo user = userService.findUserByToken(token);
+        if (user != null) {
             return ResultTool.success(user);
-        }else{
+        } else {
             return ResultTool.fail(ResultCode.NOT_FOUND);
         }
     }
 
+    @ApiOperation(value = "获取当前用户的邀请码", notes = "获取当前用户的邀请码", produces = "application/json")
+    @GetMapping("/getInviteCode/{userId}")
+    public JsonResult getInviteCode(@PathVariable Long userId) throws Exception {
+        String s = String.valueOf(userId);
+        String secret = userService.getInviteCode(s, "cong0917");
+        if (!secret.equals("") && secret != null) {
+            return ResultTool.success(secret);
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @ApiOperation(value = "根据邀请码获取邀请者Id", notes = "根据邀请码获取邀请者Id", produces = "application/json")
+    @GetMapping("/getUserIdByInviteCode/{inviteCode}")
+    public JsonResult getUserIdByInviteCode(@PathVariable String inviteCode) {
+        String userId = null;
+        userId = userService.getUserIdByInviteCode(inviteCode, "cong0917");
+        if (!userId.equals("") && userId != null) {
+            return ResultTool.success(userId);
+        } else {
+            return ResultTool.fail();
+        }
+    }
 
 }

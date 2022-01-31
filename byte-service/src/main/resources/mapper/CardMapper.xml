@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.conghuhu.mapper.CardMapper">
+    <select id="getByCardName" resultType="com.conghuhu.entity.Card">
+        select *
+        from byte_card
+        where cardname = #{cardname} limit 1;
+    </select>
+
+    <select id="getTagsByCardId" parameterType="long" resultType="com.conghuhu.entity.Tag">
+        SELECT tag.*
+        from byte_tag tag
+                 LEFT JOIN byte_card_tag ct
+                           on ct.tagId = tag.id
+        where ct.cardId = #{cardId};
+    </select>
+
+    <select id="getExecutorsByCardId" parameterType="long" resultType="com.conghuhu.vo.UserVo">
+        SELECT user.*
+        from byte_user user
+        LEFT JOIN  byte_card_user cu
+        on cu.userId = user.userId
+        where cu.cardId = #{cardId};
+    </select>
+</mapper>

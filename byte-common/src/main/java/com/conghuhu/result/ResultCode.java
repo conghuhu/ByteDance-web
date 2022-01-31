@@ -15,7 +15,7 @@ public enum ResultCode {
     SUCCESS(200, "成功"),
 
     /* 默认失败 */
-    COMMON_FAIL(999, "失败"),
+    COMMON_FAIL(500, "失败"),
 
     /* 参数错误：1000～1999 */
     PARAM_NOT_VALID(1001, "参数无效"),
@@ -23,29 +23,44 @@ public enum ResultCode {
     PARAM_TYPE_ERROR(1003, "参数类型错误"),
     PARAM_NOT_COMPLETE(1004, "参数缺失"),
 
-    PARAMS_ERROR(10001,"参数有误"),
-    ACCOUNT_PWD_NOT_EXIST(10002,"用户名或密码不存在"),
-    TOKEN_ERROR(10003,"token不合法"),
-    ACCOUNT_EXIST(10004,"账号已存在"),
-    SESSION_TIME_OUT(90001,"会话超时"),
-    UPLOAD_FAIL(20001,"上传失败"),
+    PARAMS_ERROR(10001, "参数有误"),
+    ACCOUNT_PWD_NOT_EXIST(10002, "用户名或密码不存在"),
+    TOKEN_ERROR(10003, "token不合法"),
+    ACCOUNT_EXIST(10004, "账号已存在"),
+    SESSION_TIME_OUT(90001, "会话超时"),
+    UPLOAD_FAIL(20001, "上传失败"),
 
     /* 用户错误 */
-    USER_NOT_LOGIN(90002, "用户未登录"),
-    USER_ACCOUNT_EXPIRED(2002, "账号已过期"),
-    USER_CREDENTIALS_ERROR(2003, "密码错误"),
-    USER_CREDENTIALS_EXPIRED(2004, "密码过期"),
-    USER_ACCOUNT_DISABLE(2005, "账号不可用"),
-    USER_ACCOUNT_LOCKED(2006, "账号被锁定"),
-    USER_ACCOUNT_NOT_EXIST(2007, "账号不存在"),
-    USER_ACCOUNT_ALREADY_EXIST(2008, "账号已存在"),
-    USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
+    USER_NOT_LOGIN(4010, "用户未登录"),
+    USER_ACCOUNT_EXPIRED(4011, "账号已过期，请重新登录"),
+    USER_CREDENTIALS_ERROR(4012, "密码错误"),
+    USER_ACCOUNT_DISABLE(4013, "账号不可用"),
+    USER_ACCOUNT_NOT_EXIST(4014, "账号不存在"),
+    USER_ACCOUNT_ALREADY_EXIST(4015, "账号已存在"),
+    USER_ACCOUNT_USE_BY_OTHERS(4016, "账号下线"),
+    INVITE_USER_NOT_CONSIST(4017, "邀请者用户Id不存在，请检查"),
 
     /* 查询错误 */
-    NOT_FOUND(20010,"查询无果"),
+    NOT_FOUND(20010, "查询无果"),
+
+    /* 标签错误 */
+    TAG_CONSIST(21000, "标签已存在"),
+
+    TAG_ID_NOT_CONSIST(21005, "tagId有误，请检查"),
+
+    /* 卡片错误 */
+    CARD_CONSIST(21000, "卡片已存在"),
+    CARD_ID_NOT_CONSIST(21005, "cardId有误，请检查"),
+
+    /* 项目错误 */
+    PRODUCT_CONSIST(21000, "项目名称已存在，请更改"),
+    PRODUCT_NOT_CONSIST(22000, "项目不存在，检查productId"),
+    PRODUCT_PARAM_ERROR(23000, "项目参数有误，请检查"),
+    PRODUCT_NOT_PERMISSION(70000, "用户没有该项目的权限"),
 
     /* 业务错误 */
     NO_PERMISSION(70001, "没有权限");
+
     private Integer code;
     private String message;
 
