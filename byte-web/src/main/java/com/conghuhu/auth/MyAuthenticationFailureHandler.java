@@ -7,6 +7,7 @@ import com.conghuhu.result.ResultTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -27,25 +28,16 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
         log.error("鉴权有问题");
         e.printStackTrace();
         JsonResult result = null;
-        if (e instanceof AccountExpiredException) {
-            //账号过期
-            result = ResultTool.fail(ResultCode.USER_ACCOUNT_EXPIRED);
-        } else if (e instanceof InternalAuthenticationServiceException) {
+        if (e instanceof UsernameNotFoundException) {
             //用户不存在
             result = ResultTool.fail(ResultCode.USER_ACCOUNT_NOT_EXIST);
-        }else if (e instanceof BadCredentialsException) {
+        } else if (e instanceof BadCredentialsException) {
             //密码错误
             result = ResultTool.fail(ResultCode.USER_CREDENTIALS_ERROR);
-        } else if (e instanceof CredentialsExpiredException) {
-            //密码过期
-            result = ResultTool.fail(ResultCode.USER_CREDENTIALS_EXPIRED);
         } else if (e instanceof DisabledException) {
             //账号不可用
             result = ResultTool.fail(ResultCode.USER_ACCOUNT_DISABLE);
-        } else if (e instanceof LockedException) {
-            //账号锁定
-            result = ResultTool.fail(ResultCode.USER_ACCOUNT_LOCKED);
-        }else{
+        } else {
             //其他错误
             result = ResultTool.fail(ResultCode.COMMON_FAIL);
         }

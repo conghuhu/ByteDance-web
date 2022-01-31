@@ -41,7 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User findUserByToken(String token) {
+    public UserVo findUserByToken(String token) {
         if (StringUtils.isBlank(token)) {
             return null;
         }
@@ -50,7 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return null;
         } else {
             User user = JSON.parseObject(userJson, User.class);
-            return user;
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(user,userVo);
+            return userVo;
         }
     }
 

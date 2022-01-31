@@ -6,9 +6,11 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.JwtTokenUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,13 +46,21 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         if (request.getRequestURI().contains("login")) {
             chain.doFilter(request, response);
         }
-        UsernamePasswordAuthenticationToken authentication = null;
-        JsonResult result = null;
+        UsernamePasswordAuthenticationToken authentication;
+        JsonResult result;
 
         //处理编码方式，防止中文乱码的情况
         response.setContentType("text/json;charset=utf-8");
 
-        authentication = getAuthentication(request);
+        try {
+            authentication = getAuthentication(request);
+        } catch (AccountExpiredException e) {
+            e.printStackTrace();
+            result = ResultTool.fail(ResultCode.USER_ACCOUNT_EXPIRED);
+            log.error("token失效");
+            response.getWriter().write(JSON.toJSONString(result));
+            return;
+        }
 
         if (authentication != null) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -62,17 +72,22 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         }
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws AccountExpiredException {
         // 获取Token字符串，token 置于 header 里
         String token = request.getHeader("token");
 
         if (!StringUtils.hasText(token)) {
             token = request.getParameter("token");
         }
-//        log.info("token为:" + token);
+
         if (token != null && !"".equals(token.trim())) {
             // 从Token中解密获取用户名
-            String userName = JwtTokenUtil.getUserNameFromToken(token);
+            String userName;
+            try {
+                userName = JwtTokenUtil.getUserNameFromToken(token);
+            } catch (ExpiredJwtException e) {
+                throw new AccountExpiredException("token失效");
+            }
             log.info("token解析出用户名" + userName);
             if (userName != null) {
                 String nativePassword = JwtTokenUtil.getUserPasswordFromToken(token);

@@ -9,6 +9,7 @@ import com.conghuhu.entity.User;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.AESUtil;
 import com.conghuhu.utils.HexConversion;
+import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +49,8 @@ public class UserController {
     @ApiOperation(value = "根据token查询当前用户", notes = "查询当前用户", produces = "application/json")
     @Cache(expire = 2 * 60 * 1000, name = "currentUser")
     @GetMapping("/currentUser")
-    public JsonResult<User> getCurrentUser(@RequestHeader("token") String token) {
-        User user = userService.findUserByToken(token);
+    public JsonResult<UserVo> getCurrentUser(@RequestHeader("token") String token) {
+        UserVo user = userService.findUserByToken(token);
         if (user != null) {
             return ResultTool.success(user);
         } else {

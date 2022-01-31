@@ -1,5 +1,6 @@
 package com.conghuhu.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.conghuhu.entity.*;
@@ -12,6 +13,7 @@ import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 import com.conghuhu.service.ProductService;
 import com.conghuhu.service.UserService;
+import com.conghuhu.utils.UserThreadLocal;
 import com.conghuhu.vo.CardVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
@@ -205,5 +207,32 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ResultTool.fail();
         }
+    }
+
+    @Override
+    public JsonResult getMemberStatus(Long productId) {
+        User user = UserThreadLocal.get();
+        Integer count = productMapper.selectCount(new LambdaQueryWrapper<Product>()
+                .eq(Product::getId, productId)
+                .eq(Product::getOwnerId, user.getUserId()));
+        JSONObject jsonObject = new JSONObject();
+        if (count > 0) {
+            jsonObject.put("isOwner", true);
+            return ResultTool.success(jsonObject);
+        } else {
+            jsonObject.put("isOwner", false);
+            return ResultTool.success(jsonObject);
+        }
+    }
+
+    @Override
+    public JsonResult getInviteInfo(Long productId, String secret) {
+        Long inviteUserId = Long.valueOf(userService.getUserIdByInviteCode(secret, "cong0917"));
+        String productName = productMapper.getProductNameById(productId);
+        String inviteUserName = userMapper.getUserNameById(inviteUserId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("productName", productName);
+        jsonObject.put("inviteUserName", inviteUserName);
+        return ResultTool.success(jsonObject);
     }
 }

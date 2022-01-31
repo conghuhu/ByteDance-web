@@ -76,6 +76,16 @@ public class ProductController {
         return productService.inviteUser(inviteParam);
     }
 
+    @ApiOperation(value = "获取邀请展示信息", notes = "获取邀请展示信息", produces = "application/json")
+    @GetMapping("/getInviteInfo")
+    public JsonResult getInviteInfo(
+            @RequestParam("productId") Long productId,
+            @RequestParam("secret") String secret
+    ) {
+        return productService.getInviteInfo(productId, secret);
+    }
+
+
     @ApiOperation(value = "获取项目成员列表", notes = "获取项目成员列表", produces = "application/json")
     @GetMapping("/getMemberList/{productId}")
     public JsonResult<List<UserVo>> getMemberList(@PathVariable Long productId) {
@@ -85,6 +95,12 @@ public class ProductController {
         } else {
             return ResultTool.fail();
         }
+    }
+
+    @ApiOperation(value = "判断成员在项目中的身份信息", notes = "判断成员在项目中的身份信息", produces = "application/json")
+    @GetMapping("/getMemberStatus/{productId}")
+    public JsonResult getMemberStatus(@PathVariable Long productId) {
+        return productService.getMemberStatus(productId);
     }
 
 }

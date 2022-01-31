@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author conghuhu
@@ -16,5 +16,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface ProductMapper extends BaseMapper<Product> {
-
+    /**
+     * 通过项目Id获取项目名称
+     *
+     * @param productId
+     * @return
+     */
+    String getProductNameById(Long productId);
 }

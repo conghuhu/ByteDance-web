@@ -37,6 +37,7 @@ public class MyUserDetailsService implements UserDetailsService {
         User user = userMapper.getByUserName(username);
         log.info("数据库中找到User：" + user);
         if (user == null) {
+            log.error("用户名不存在，登录失败");
             throw new UsernameNotFoundException("用户名不存在，登录失败");
         }
         // 存到UserThreadLocal中，后续拦截器使用

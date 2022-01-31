@@ -1,7 +1,5 @@
 package com.conghuhu.vo;
 
-import com.conghuhu.entity.Card;
-
 import com.conghuhu.entity.Tag;
 import lombok.Data;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 /**
  * @author conghuhu
- * @create 2022-01-28 16:54
+ * @create 2022-01-31 12:47
  */
 @Data
 public class ProductInitShowVo {

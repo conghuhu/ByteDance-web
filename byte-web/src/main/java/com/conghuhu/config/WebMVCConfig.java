@@ -28,6 +28,6 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(myInterceptor).addPathPatterns("/product/getProductShowInfo/**");
+        registry.addInterceptor(myInterceptor).addPathPatterns("/**");
     }
 }

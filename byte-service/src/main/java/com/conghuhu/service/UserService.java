@@ -25,7 +25,7 @@ public interface UserService extends IService<User> {
      * @param token
      * @return
      */
-    User findUserByToken(String token);
+    UserVo findUserByToken(String token);
 
     /**
      * 根据id查找userVo

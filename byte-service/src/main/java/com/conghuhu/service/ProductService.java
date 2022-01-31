@@ -76,4 +76,20 @@ public interface ProductService extends IService<Product> {
      * @return
      */
     JsonResult deleteProductById(Long id);
+
+    /**
+     * 获取成员在项目中的身份信息
+     *
+     * @param productId
+     * @return
+     */
+    JsonResult getMemberStatus(Long productId);
+
+    /**
+     * 获取邀请展示信息
+     * @param productId
+     * @param secret
+     * @return
+     */
+    JsonResult getInviteInfo(Long productId, String secret);
 }
