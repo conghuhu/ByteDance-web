@@ -15,6 +15,7 @@ import com.conghuhu.service.ProductService;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.UserThreadLocal;
 import com.conghuhu.vo.CardVo;
+import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
 import org.springframework.beans.BeanUtils;
@@ -218,11 +219,10 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         JSONObject jsonObject = new JSONObject();
         if (count > 0) {
             jsonObject.put("isOwner", true);
-            return ResultTool.success(jsonObject);
         } else {
             jsonObject.put("isOwner", false);
-            return ResultTool.success(jsonObject);
         }
+        return ResultTool.success(jsonObject);
     }
 
     @Override
@@ -234,5 +234,21 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         jsonObject.put("productName", productName);
         jsonObject.put("inviteUserName", inviteUserName);
         return ResultTool.success(jsonObject);
+    }
+
+    @Override
+    public JsonResult<PersonProductVo> getPersonProduct() {
+        User user = UserThreadLocal.get();
+        Long userId = user.getUserId();
+        List<Product> productList = productMapper.selectList(new LambdaQueryWrapper<Product>().eq(Product::getOwnerId, userId));
+        List<Product> shareProductList = productMapper.getShareProductByUserId(userId);
+        PersonProductVo personProductVo = new PersonProductVo();
+        if (productList != null && shareProductList != null) {
+            personProductVo.setProductList(productList);
+            personProductVo.setShareProductList(shareProductList);
+            return ResultTool.success(personProductVo);
+        } else {
+            return ResultTool.fail();
+        }
     }
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <p>
  * Mapper 接口
@@ -23,4 +25,12 @@ public interface ProductMapper extends BaseMapper<Product> {
      * @return
      */
     String getProductNameById(Long productId);
+
+    /**
+     * 获取某人协作参与的项目
+     *
+     * @param userId
+     * @return
+     */
+    List<Product> getShareProductByUserId(Long userId);
 }

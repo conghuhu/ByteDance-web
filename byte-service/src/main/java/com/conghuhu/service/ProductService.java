@@ -5,6 +5,7 @@ import com.conghuhu.entity.Product;
 import com.conghuhu.params.CreateProductParam;
 import com.conghuhu.params.InviteParam;
 import com.conghuhu.result.JsonResult;
+import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
 
@@ -87,9 +88,17 @@ public interface ProductService extends IService<Product> {
 
     /**
      * 获取邀请展示信息
+     *
      * @param productId
      * @param secret
      * @return
      */
     JsonResult getInviteInfo(Long productId, String secret);
+
+    /**
+     * 获取个人创建的项目
+     *
+     * @return
+     */
+    JsonResult<PersonProductVo> getPersonProduct();
 }

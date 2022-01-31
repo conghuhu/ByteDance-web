@@ -8,6 +8,7 @@ import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.ProductService;
+import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
@@ -63,6 +64,13 @@ public class ProductController {
     public JsonResult<List<Product>> getProductByUserId(@PathVariable Long userId) {
         return productService.getProductByUserId(userId);
     }
+
+    @ApiOperation(value = "获取个人创建和参与的项目", notes = "获取个人创建和参与的项目", produces = "application/json")
+    @GetMapping("/getPersonProduct")
+    public JsonResult<PersonProductVo> getPersonProduct() {
+        return productService.getPersonProduct();
+    }
+
 
     @ApiOperation(value = "设置项目的背景", notes = "设置项目的背景", produces = "application/json")
     @PostMapping("/setProductBackground/{productId}")
