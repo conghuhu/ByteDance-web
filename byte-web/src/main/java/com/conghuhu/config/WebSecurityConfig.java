@@ -110,12 +110,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("api/**",
+        web.ignoring().antMatchers(
+                "api/**",
                 "/swagger-ui.html",
                 "/swagger**/**",
                 "/webjars/**",
                 "/v2/**",
-                "/register");
+                "/register",
+                "/mail/sendVerifyCodeToMail**",
+                "/users/modifyUserPassWord"
+        );
     }
 
 }

@@ -12,6 +12,8 @@ import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.RegisterService;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.JwtTokenUtil;
+import com.conghuhu.utils.RedisUtil;
+import com.conghuhu.utils.ValidateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +34,18 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implements RegisterService {
 
+
+    private final RedisUtil redisUtil;
+
     private final UserService userService;
 
     private final JwtTokenUtil jwtUtils;
 
-    private final StringRedisTemplate stringRedisTemplate;
 
-    public RegisterServiceImpl(UserService userService, JwtTokenUtil jwtUtils, StringRedisTemplate stringRedisTemplate) {
+    public RegisterServiceImpl(UserService userService, JwtTokenUtil jwtUtils, RedisUtil redisUtil) {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
-        this.stringRedisTemplate = stringRedisTemplate;
+        this.redisUtil = redisUtil;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -58,26 +62,41 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         String password = registerParam.getPassword();
         String verifyCode = registerParam.getVerifyCode();
         String fullName = registerParam.getFullName();
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+        if (StringUtils.isBlank(username)
+                || StringUtils.isBlank(password)
+                || StringUtils.isBlank(verifyCode)) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
         }
+        if (!ValidateUtil.validateEmail(username)) {
+            return ResultTool.fail(ResultCode.PARAMS_ERROR);
+        }
+
         User user = userService.getByUserName(username);
         if (user != null) {
             return ResultTool.fail(ResultCode.ACCOUNT_EXIST);
-        } else {
-            User newUser = new User();
-            newUser.setUsername(username);
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            newUser.setPassword(passwordEncoder.encode(password));
-            newUser.setCreatedTime(LocalDateTime.now());
-            newUser.setLastLoginTime(LocalDateTime.now());
-            newUser.setFullname(fullName);
-            newUser.setAvatar("https://joeschmoe.io/api/v1/random");
-            this.userService.save(newUser);
-            String token = jwtUtils.createToken(username, password);
-            stringRedisTemplate.opsForValue().set("Token_" + token, JSON.toJSONString(newUser), 1, TimeUnit.DAYS);
-
-            return ResultTool.success(token);
         }
+
+        String realCode = (String) redisUtil.get(username + "_code");
+        if (!verifyCode.equals(realCode)) {
+            return ResultTool.fail(ResultCode.MAIL_CODE_ERROR);
+        }
+
+        User newUser = new User();
+        newUser.setUsername(username);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setCreatedTime(LocalDateTime.now());
+        newUser.setLastLoginTime(LocalDateTime.now());
+        newUser.setFullname(fullName);
+        newUser.setAvatar("https://joeschmoe.io/api/v1/random");
+        userService.save(newUser);
+
+        String token = jwtUtils.createToken(username, password);
+        newUser.setToken(token);
+        redisUtil.set("Token_" + username, newUser);
+        redisUtil.setExpire("Token_" + username, 86400);
+
+        return ResultTool.success(token);
+
     }
 }

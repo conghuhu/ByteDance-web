@@ -118,12 +118,15 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     @Override
     public JsonResult<Product> createProduct(CreateProductParam productParam) {
         Product product = new Product();
-        Integer selectCount = productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getProductName, productParam.getProductName()));
+        Integer selectCount = productMapper.selectCount(new LambdaQueryWrapper<Product>()
+                .eq(Product::getProductName, productParam.getProductName()));
         if (selectCount > 0) {
             return ResultTool.fail(ResultCode.PRODUCT_CONSIST);
         }
         BeanUtils.copyProperties(productParam, product);
+        product.setCreatedTime(LocalDateTime.now());
         int res = productMapper.insert(product);
+
         ProUser proUser = new ProUser();
         proUser.setProductId(product.getId());
         proUser.setUserId(product.getOwnerId());

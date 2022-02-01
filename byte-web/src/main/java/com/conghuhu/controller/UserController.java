@@ -2,6 +2,7 @@ package com.conghuhu.controller;
 
 
 import com.conghuhu.cache.Cache;
+import com.conghuhu.params.UserPasswordParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
@@ -12,6 +13,7 @@ import com.conghuhu.utils.HexConversion;
 import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -72,14 +74,19 @@ public class UserController {
 
     @ApiOperation(value = "根据邀请码获取邀请者Id", notes = "根据邀请码获取邀请者Id", produces = "application/json")
     @GetMapping("/getUserIdByInviteCode/{inviteCode}")
-    public JsonResult getUserIdByInviteCode(@PathVariable String inviteCode) {
+    public JsonResult<String> getUserIdByInviteCode(@PathVariable String inviteCode) {
         String userId = null;
         userId = userService.getUserIdByInviteCode(inviteCode, "cong0917");
-        if (!userId.equals("") && userId != null) {
+        if (StringUtils.hasText(userId)) {
             return ResultTool.success(userId);
         } else {
             return ResultTool.fail();
         }
     }
 
+    @ApiOperation(value = "更改用户密码（无需token）", notes = "更改用户密码", produces = "application/json")
+    @PostMapping("/modifyUserPassWord")
+    public JsonResult modifyUserPassWord(@RequestBody UserPasswordParam userPasswordParam) {
+        return userService.modifyUserPassWord(userPasswordParam);
+    }
 }

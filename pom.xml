@@ -37,6 +37,7 @@
         <swagger2.version>2.9.2</swagger2.version>
         <fastjson.version>1.2.62</fastjson.version>
         <jwt.version>0.9.1</jwt.version>
+        <freemarker.version>2.3.31</freemarker.version>
     </properties>
 
     <dependencies>
@@ -158,7 +159,7 @@
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.31</version>
+                <version>${freemarker.version}</version>
             </dependency>
             <!--引入swagger-->
             <dependency>

@@ -2,4 +2,31 @@ spring:
   application:
     name: byte-service
   profiles:
-    active: dev
+    active: prod
+  mail:
+    #smtp服务主机  qq邮箱则为smtp.qq.com
+    host: smtp.163.com
+    #服务协议
+    protocol: smtp
+    # 编码集
+    default-encoding: UTF-8
+    #发送邮件的账户
+    username: 15841721425@163.com
+    #授权码
+    password: BXMZXWVALLBBWEFP
+    test-connection: false
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+
+

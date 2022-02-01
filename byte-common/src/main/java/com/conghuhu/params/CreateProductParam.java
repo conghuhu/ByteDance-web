@@ -21,5 +21,4 @@ public class CreateProductParam {
 
     private String background;
 
-    private LocalDateTime createdTime;
 }

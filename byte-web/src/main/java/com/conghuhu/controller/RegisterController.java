@@ -28,7 +28,7 @@ public class RegisterController {
         this.registerService = registerService;
     }
 
-    @ApiOperation(value = "注册新用户", notes = "注册新用户", produces = "application/json")
+    @ApiOperation(value = "注册新用户(无需token)", notes = "注册新用户", produces = "application/json")
     @PostMapping
     public JsonResult register(@RequestBody RegisterParam registerParam) {
         return registerService.register(registerParam);

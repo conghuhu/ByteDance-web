@@ -13,12 +13,6 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 20MB
-  mail:
-    host: smtp.163.com
-    username: kongdong_sdu
-    password: AQLXBGQGYFHKJVHZ
-    properties:
-      from: kongdong_sdu@163.com
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml

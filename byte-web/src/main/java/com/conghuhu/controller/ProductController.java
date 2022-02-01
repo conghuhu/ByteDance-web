@@ -36,13 +36,13 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @ApiOperation(value = "创建新任务", notes = "创建新任务", produces = "application/json")
+    @ApiOperation(value = "创建新项目", notes = "创建新项目", produces = "application/json")
     @PostMapping("/create")
     public JsonResult<Product> createProduct(@RequestBody CreateProductParam productParam) {
         return productService.createProduct(productParam);
     }
 
-    @ApiOperation(value = "删除任务", notes = "删除任务", produces = "application/json")
+    @ApiOperation(value = "删除项目", notes = "删除项目", produces = "application/json")
     @DeleteMapping("/delete")
     public JsonResult deleteProduct(@RequestParam(name = "id") Long id) {
         return productService.deleteProductById(id);

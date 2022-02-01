@@ -18,7 +18,7 @@ public class UserVo {
 
     private String avatar;
 
-    private String fullName;
+    private String fullname;
 
 
 }

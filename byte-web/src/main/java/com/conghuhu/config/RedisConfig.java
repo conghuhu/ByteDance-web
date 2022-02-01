@@ -23,8 +23,8 @@ import java.time.Duration;
 /**
  * Redis的核心配置类，这个类提供了两个方法（其实提供了两个bean，这两个bean会加载到spring的context里边，供使用者进行调用)
  */
-@Configuration//这个标签，通常与@bean结合使用，当@bean使用到该类的方法上，代表将该方法做为一个bean交给了spring的context
-@EnableCaching//允许我们使用缓存
+@Configuration
+@EnableCaching
 public class RedisConfig {
 
     /**

@@ -40,6 +40,15 @@ public enum ResultCode {
     USER_ACCOUNT_USE_BY_OTHERS(4016, "账号下线"),
     INVITE_USER_NOT_CONSIST(4017, "邀请者用户Id不存在，请检查"),
 
+    /* 邮件服务 */
+    MAIL_SEND_ERROR(6000, "邮件发送失败，请重试"),
+    MAIL_MESSAGE_ERROR(6001, "邮件消息生成失败"),
+    MAIL_PARAM_ERROR(6002, "邮件参数有误，请检查"),
+    MAIL_HTML_ERROR(6003, "读取html文件错误"),
+    MAIL_TEMPLATE_ERROR(6004, "freeMaker生成邮件模板错误"),
+    MAIL_CODE_ALREADY_SEND(6005, "已发送验证码至邮箱，稍后重试"),
+    MAIL_CODE_ERROR(6006, "验证码有误，请检查"),
+
     /* 查询错误 */
     NOT_FOUND(20010, "查询无果"),
 
