@@ -6,6 +6,11 @@ spring:
     url: jdbc:mysql://150.158.97.5:3306/qingxun?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
     username: root
     password: cong0917
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 20
+      connection-timeout: 60000
+      idle-timeout: 60000
   redis:
     host: 101.201.143.127
     port: 6379
@@ -13,6 +18,9 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 20MB
+  mvc:
+    async:
+      request-timeout: 15000
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml

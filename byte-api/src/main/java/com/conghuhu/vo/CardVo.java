@@ -43,4 +43,12 @@ public class CardVo {
 
     private Boolean expired;
 
+    private LocalDateTime createdTime;
+
+    private UserVo creator;
+
+    private String background;
+
+    private Boolean completed;
+
 }

@@ -9,6 +9,7 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 
+import com.conghuhu.vo.CardVo;
 import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,16 +42,10 @@ public class CardController {
     @ApiOperation(value = "根据卡片id获取卡片信息", notes = "根据卡片id获取卡片信息", produces = "application/json")
 
     @GetMapping("/queryById/{cardId}")
-    public JsonResult getCardById(@PathVariable Integer cardId) {
-        Card card = cardService.getById(cardId);
-        if (card != null) {
-            return ResultTool.success(card);
-        } else {
-            return ResultTool.fail(ResultCode.NOT_FOUND);
-        }
+    public JsonResult<CardVo> getCardById(@PathVariable Long cardId) {
+        return cardService.getCardById(cardId);
     }
 
-    @ApiOperation(value = "根据卡片名获取卡片信息", notes = "根据卡片名获取卡片信息", produces = "application/json")
     @GetMapping("/queryByName/{cardname}")
     public JsonResult getCardByName(@PathVariable String cardname) {
         Card card = cardService.getByName(cardname);
@@ -67,7 +62,6 @@ public class CardController {
         return cardService.createTag(CardParam);
     }
 
-    @ApiOperation(value = "修改卡片", notes = "修改卡片", produces = "application/json")
     @PostMapping("/modify")
     public JsonResult updateCard(@RequestBody Card CardParam) {
         return cardService.updateTag(CardParam);
@@ -98,7 +92,7 @@ public class CardController {
         return cardService.editCardNameByCardId(editParam, cardId);
     }
 
-    @ApiOperation(value = "设置卡片的执行时间", notes = "设置卡片的执行时间", produces = "application/json")
+    @ApiOperation(value = "设置卡片的执行时间", notes = "设置卡片的执行时间,\n 当开始时间和结束时间都穿空字符串时，后台将取消已设置的时间\n 二者传时间戳时，为设置模式", produces = "application/json")
     @PostMapping("/setCardDeadline/{cardId}")
     public JsonResult setCardDeadline(@RequestBody CardDateParam cardDateParam, @PathVariable Long cardId) {
         return cardService.setCardDeadline(cardDateParam, cardId);
@@ -112,7 +106,25 @@ public class CardController {
 
     @ApiOperation(value = "设置卡片的执行人", notes = "设置卡片的执行人", produces = "application/json")
     @PostMapping("/setExecutor/{cardId}")
-    public JsonResult<List<UserVo>> setExecutor(@RequestBody ExecutorParam executorParam, @PathVariable Long cardId) {
-        return cardService.setExecutor(executorParam, cardId);
+    public JsonResult<List<UserVo>> setExecutor(@RequestParam("userId") Long userId, @PathVariable Long cardId) {
+        return cardService.setExecutor(userId, cardId);
+    }
+
+    @ApiOperation(value = "删除卡片的执行人", notes = "删除卡片的执行人", produces = "application/json")
+    @DeleteMapping("/removeExecutor/{cardId}")
+    public JsonResult removeExecutor(@RequestParam("userId") Long userId, @PathVariable Long cardId) {
+        return cardService.removeExecutor(userId, cardId);
+    }
+
+    @ApiOperation(value = "设置卡片的背景色", notes = "设置卡片的背景色，不需要传#，只传后面的HEX值,如ffffff", produces = "application/json")
+    @PostMapping("/setCardBackground/{cardId}")
+    public JsonResult setCardBackground(@RequestParam("background") String background, @PathVariable Long cardId) {
+        return cardService.setCardBackground(background, cardId);
+    }
+
+    @ApiOperation(value = "设置卡片的完成状态", notes = "设置卡片的完成状态，结合日期使用，completed为true则完成，false为未完成", produces = "application/json")
+    @PostMapping("/changeCardCompleteStatus/{cardId}")
+    public JsonResult changeCardCompleteStatus(@RequestParam("completed") Boolean completed, @PathVariable Long cardId) {
+        return cardService.changeCardCompleteStatus(completed, cardId);
     }
 }

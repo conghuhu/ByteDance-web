@@ -34,13 +34,13 @@ public class TagController {
 
     @ApiOperation(value = "创建新标签", notes = "创建新标签", produces = "application/json")
     @PostMapping("/create")
-    public JsonResult createTag(@RequestBody TagParam tagParam) {
+    public JsonResult<Tag> createTag(@RequestBody TagParam tagParam) {
         return tagService.createTag(tagParam);
     }
 
     @ApiOperation(value = "修改标签", notes = "修改标签", produces = "application/json")
     @PostMapping("/modify")
-    public JsonResult updateTag(@RequestBody TagParam tagParam) {
+    public JsonResult<Tag> updateTag(@RequestBody Tag tagParam) {
         return tagService.updateTag(tagParam);
     }
 
@@ -60,5 +60,11 @@ public class TagController {
     @PostMapping("/{tagId}/setTagByCardId/{cardId}")
     public JsonResult setTagByCardId(@PathVariable Long tagId, @PathVariable Long cardId) {
         return tagService.setTagByCardId(tagId, cardId);
+    }
+
+    @ApiOperation(value = "根据cardId删除对应的标签", notes = "根据cardId删除对应的标签", produces = "application/json")
+    @DeleteMapping("/{tagId}/removeTagByCardId/{cardId}")
+    public JsonResult removeTagByCardId(@PathVariable Long tagId, @PathVariable Long cardId){
+        return tagService.removeTagByCardId(tagId,cardId);
     }
 }

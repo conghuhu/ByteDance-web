@@ -9,6 +9,7 @@ import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -93,7 +94,7 @@ public interface ProductService extends IService<Product> {
      * @param secret
      * @return
      */
-    JsonResult getInviteInfo(Long productId, String secret);
+    JsonResult getInviteInfo(Long productId, String secret,HttpServletRequest request);
 
     /**
      * 获取个人创建的项目

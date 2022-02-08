@@ -40,12 +40,8 @@ public class MyInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         log.info("====拦截路由requestURI：" + requestURI);
-
-        // 正则匹配 /product/getProductShowInfo 路径
-        String pattern = "^/product/getProductShowInfo/\\d$";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(requestURI);
-        boolean matches = m.matches();
+        // 匹配 /product/getProductShowInfo 路径
+        boolean matches = requestURI.contains("/product/getProductShowInfo");
         if (matches) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
@@ -93,8 +89,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        // 整个请求都处理完，DispatcherServlet也渲染了对应的视图，
-        log.info("清理线程变量");
+        // 整个请求都处理完，DispatcherServlet也渲染了对应的视图
         UserThreadLocal.remove();
     }
 

@@ -1,8 +1,10 @@
 package com.conghuhu.cache;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultTool;
+import com.conghuhu.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,14 +29,18 @@ import java.time.Duration;
 @Slf4j
 public class CacheAspect {
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private final RedisUtil redisUtil;
+
+    public CacheAspect(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     @Pointcut("@annotation(com.conghuhu.cache.Cache)")
-    public void pt(){}
+    public void pt() {
+    }
 
     @Around("pt()")
-    public Object around(ProceedingJoinPoint pjp){
+    public Object around(ProceedingJoinPoint pjp) {
         try {
             Signature signature = pjp.getSignature();
             //类名
@@ -46,11 +52,11 @@ public class CacheAspect {
             Object[] args = pjp.getArgs();
             //参数
             String params = "";
-            for(int i=0; i<args.length; i++) {
-                if(args[i] != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] != null) {
                     params += JSON.toJSONString(args[i]);
                     parameterTypes[i] = args[i].getClass();
-                }else {
+                } else {
                     parameterTypes[i] = null;
                 }
             }
@@ -66,16 +72,17 @@ public class CacheAspect {
             //缓存名称
             String name = annotation.name();
             //先从redis获取
-            String redisKey = name + "::" + className+"::"+methodName+"::"+params;
-            String redisValue = redisTemplate.opsForValue().get(redisKey);
-            if (StringUtils.isNotEmpty(redisValue)){
-                log.info("走了缓存~~~,{},{}",className,methodName);
+            String redisKey = name + "::" + className + "::" + methodName + "::" + params;
+            String redisValue = (String) redisUtil.get(redisKey);
+            if (StringUtils.isNotEmpty(redisValue)) {
+                log.info("走了缓存~~~,{},{}", className, methodName);
                 return JSON.parseObject(redisValue, JsonResult.class);
             }
 
             Object proceed = pjp.proceed();
-            redisTemplate.opsForValue().set(redisKey,JSON.toJSONString(proceed), Duration.ofMillis(expire));
-            log.info("存入缓存~~~ {},{}",className,methodName);
+            redisUtil.set(redisKey, JSON.toJSONString(proceed));
+            redisUtil.setExpire(redisKey, expire);
+            log.info("存入缓存~~~ {},{}", className, methodName);
             return proceed;
         } catch (Throwable throwable) {
             throwable.printStackTrace();

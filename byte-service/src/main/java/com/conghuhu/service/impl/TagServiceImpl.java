@@ -63,14 +63,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
         int res = tagMapper.insert(tag);
         if (res > 0) {
-            return ResultTool.success();
+            return ResultTool.success(tag);
         } else {
             return ResultTool.fail();
         }
     }
 
     @Override
-    public JsonResult updateTag(TagParam tagParam) {
+    public JsonResult updateTag(Tag tagParam) {
         Tag tag = new Tag();
         tag.setId(tagParam.getId());
         tag.setTagName(tagParam.getTagName());
@@ -78,7 +78,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         tag.setProductId(tagParam.getProductId());
         int res = tagMapper.updateById(tag);
         if (res > 0) {
-            return ResultTool.success();
+            return ResultTool.success(tag);
         } else {
             return ResultTool.fail();
         }
@@ -96,12 +96,20 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult removeTagById(Long id) {
+        if (id == null) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+        cardTagMapper.delete(new LambdaQueryWrapper<CardTag>()
+                .eq(CardTag::getTagId, id));
         int res = tagMapper.deleteById(id);
         if (res > 0) {
             return ResultTool.success();
         } else {
+            // 手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ResultTool.fail();
         }
     }
@@ -131,6 +139,26 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         card.setTag(true);
         int cardRes = cardMapper.updateById(card);
         if (res > 0 && cardRes > 0) {
+            return ResultTool.success();
+        } else {
+            // 手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResultTool.fail();
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public JsonResult removeTagByCardId(Long tagId, Long cardId) {
+        LambdaQueryWrapper<CardTag> queryWrapper = new LambdaQueryWrapper<CardTag>()
+                .eq(CardTag::getTagId, tagId)
+                .eq(CardTag::getCardId, cardId);
+        Integer count = cardTagMapper.selectCount(queryWrapper);
+        if (count <= 0) {
+            return ResultTool.fail(ResultCode.PARAMS_ERROR);
+        }
+        int delete = cardTagMapper.delete(queryWrapper);
+        if (delete > 0) {
             return ResultTool.success();
         } else {
             // 手动回滚

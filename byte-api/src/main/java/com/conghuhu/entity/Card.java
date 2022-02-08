@@ -63,5 +63,13 @@ public class Card implements Serializable {
 
     private Boolean expired;
 
+    @ApiModelProperty(value = "创建时间")
+    private LocalDateTime createdTime;
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long creator;
+
+    private String background;
+
+    private Boolean completed;
 }

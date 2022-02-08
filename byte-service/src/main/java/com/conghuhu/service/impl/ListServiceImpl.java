@@ -12,10 +12,15 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.ListService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.conghuhu.service.WebSocketService;
+import com.conghuhu.vo.WebsocketDetail;
+import com.conghuhu.vo.WebsocketVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -27,6 +32,9 @@ import java.time.LocalDateTime;
  */
 @Service
 public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements ListService {
+
+    @Autowired
+    private WebSocketService webSocketService;
 
     private final ProductMapper productMapper;
 
@@ -55,11 +63,11 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         list.setProductId(productId);
         list.setPos(pos);
         list.setListName(listName);
-        list.setBackgroundColor(backgroundColor);
+        list.setClosed(false);
         list.setCreatedTime(LocalDateTime.now());
         int res = listMapper.insert(list);
         if (res > 0) {
-            return ResultTool.success();
+            return ResultTool.success(list);
         } else {
             return ResultTool.fail();
         }
@@ -83,8 +91,15 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         List list = new List();
         list.setId(listId);
         list.setListName(listName);
+        List selectById = listMapper.selectById(listId);
         int res = listMapper.updateById(list);
         if (res > 0) {
+            WebsocketVo websocketVo = new WebsocketVo();
+            websocketVo.setEvent("updateModels");
+            websocketVo.setTypeName("List");
+            websocketVo.setTags(new ArrayList<>(Arrays.asList("updates")));
+            websocketVo.setDetail(WebsocketDetail.builder().id(listId).name(listName).build());
+            webSocketService.sendMessageToAll(String.valueOf(selectById.getProductId()), websocketVo);
             return ResultTool.success();
         } else {
             return ResultTool.fail();

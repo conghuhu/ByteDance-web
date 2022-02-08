@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -84,13 +85,14 @@ public class ProductController {
         return productService.inviteUser(inviteParam);
     }
 
-    @ApiOperation(value = "获取邀请展示信息", notes = "获取邀请展示信息", produces = "application/json")
+    @ApiOperation(value = "获取邀请展示信息(无需token)", notes = "获取邀请展示信息", produces = "application/json")
     @GetMapping("/getInviteInfo")
     public JsonResult getInviteInfo(
             @RequestParam("productId") Long productId,
-            @RequestParam("secret") String secret
+            @RequestParam("secret") String secret,
+            HttpServletRequest request
     ) {
-        return productService.getInviteInfo(productId, secret);
+        return productService.getInviteInfo(productId, secret,request);
     }
 
 

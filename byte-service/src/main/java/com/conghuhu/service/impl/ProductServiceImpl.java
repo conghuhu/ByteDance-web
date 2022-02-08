@@ -13,17 +13,23 @@ import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 import com.conghuhu.service.ProductService;
 import com.conghuhu.service.UserService;
+import com.conghuhu.utils.JwtTokenUtil;
 import com.conghuhu.utils.UserThreadLocal;
 import com.conghuhu.vo.CardVo;
 import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,29 +85,34 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
         List<Tag> tagList = tagMapper.selectList(new LambdaQueryWrapper<Tag>().eq(Tag::getProductId, productId));
 
-        List<Card> cardList = cardMapper.selectList(new LambdaQueryWrapper<Card>().eq(Card::getProductId, productId));
+        List<Card> cardList = cardMapper.selectList(new LambdaQueryWrapper<Card>()
+                .eq(Card::getProductId, productId)
+                .eq(Card::getClosed, false)
+        );
 
-        List<com.conghuhu.entity.List> lists = listMapper.selectList(new LambdaQueryWrapper<com.conghuhu.entity.List>().eq(com.conghuhu.entity.List::getProductId, productId));
+        List<com.conghuhu.entity.List> lists = listMapper.selectList(new LambdaQueryWrapper<com.conghuhu.entity.List>()
+                .eq(com.conghuhu.entity.List::getProductId, productId)
+                .orderByAsc(com.conghuhu.entity.List::getPos)
+        );
 
-        // 过滤掉closed
-        List<CardVo> cardVoList = cardList.parallelStream()
-                .filter(item -> !item.getClosed())
-                .filter(item -> item.getTag() || item.getExecutor()).map(item -> {
-                    CardVo cardVo = new CardVo();
-                    BeanUtils.copyProperties(item, cardVo);
-                    List<Tag> tags = null;
-                    List<UserVo> executorList = null;
-                    Long cardId = item.getCardId();
-                    if (item.getTag()) {
-                        tags = cardMapper.getTagsByCardId(cardId);
-                    }
-                    if (item.getExecutor()) {
-                        executorList = cardService.getExecutorsByCardId(cardId);
-                    }
-                    cardVo.setTagList(tags);
-                    cardVo.setExecutorList(executorList);
-                    return cardVo;
-                }).collect(Collectors.toList());
+        List<CardVo> cardVoList = cardList.parallelStream().map(item -> {
+            CardVo cardVo = new CardVo();
+            BeanUtils.copyProperties(item, cardVo);
+            List<Tag> tags = null;
+            List<UserVo> executorList = null;
+            Long cardId = item.getCardId();
+            if (item.getTag()) {
+                tags = cardMapper.getTagsByCardId(cardId);
+            }
+            if (item.getExecutor()) {
+                executorList = cardService.getExecutorsByCardId(cardId);
+            }
+            UserVo creator = userService.findUserVoById(item.getCreator());
+            cardVo.setTagList(tags != null ? tags : new ArrayList<>());
+            cardVo.setExecutorList(executorList != null ? executorList : new ArrayList<>());
+            cardVo.setCreator(creator);
+            return cardVo;
+        }).collect(Collectors.toList());
 
         List<UserVo> memberList = getMemberList(productId);
         showVO.setProductName(product.getProductName());
@@ -111,6 +122,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         showVO.setIsPrivate(product.getIsPrivate());
         showVO.setCreatedTime(product.getCreatedTime());
         showVO.setMemberList(memberList);
+        showVO.setBackground(product.getBackground());
         return showVO;
     }
 
@@ -143,7 +155,6 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     @Override
     public JsonResult<List<Product>> getProductByUserId(Long userId) {
-
         List<Product> productList = productMapper.selectList(new LambdaQueryWrapper<Product>().eq(Product::getOwnerId, userId));
         if (productList != null) {
             return ResultTool.success(productList);
@@ -154,9 +165,13 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     @Override
     public JsonResult setProductBackground(Long productId, String background) {
+        if (!StringUtils.hasText(background) || productId == null) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
         Product product = new Product();
         product.setId(productId);
-        product.setBackground(background);
+        product.setBackground("#" + background);
         int res = productMapper.updateById(product);
         if (res > 0) {
             return ResultTool.success();
@@ -170,20 +185,37 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         ProUser proUser = new ProUser();
         String secret = inviteParam.getSecret();
         Long productId = inviteParam.getProductId();
-        Long inviteUserId = Long.valueOf(userService.getUserIdByInviteCode(secret, "cong0917"));
-        Integer selectProductCount = productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getId, productId));
-        if (selectProductCount <= 0) {
-            return ResultTool.fail(ResultCode.PRODUCT_NOT_CONSIST);
+        Long userId = inviteParam.getUserId();
+        if (productId == null || userId == null || !StringUtils.hasText(secret)) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
         }
-        Integer selectInviteUserCount = productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getOwnerId, inviteUserId));
+        if (userId == 0 || productId == 0) {
+            return ResultTool.fail(ResultCode.PARAMS_ERROR);
+        }
+        Long inviteUserId = Long.valueOf(userService.getUserIdByInviteCode(secret, "cong0917"));
+        // 自己邀请自己，直接进项目
+        if (inviteUserId.equals(userId)) {
+            return ResultTool.success();
+        }
+        Integer selectInviteUserCount = productMapper.selectCount(new LambdaQueryWrapper<Product>()
+                .eq(Product::getId, productId)
+                .eq(Product::getOwnerId, inviteUserId));
         // 必须项目的 Owner 才有资格邀请他人
         if (selectInviteUserCount <= 0) {
-            return ResultTool.fail(ResultCode.INVITE_USER_NOT_CONSIST);
+            return ResultTool.fail(ResultCode.INVITE_USER_PRODUCT_ERROR);
         }
-        proUser.setCreatedTime(LocalDateTime.now());
-        proUser.setUserId(inviteParam.getUserId());
+        proUser.setUserId(userId);
         proUser.setProductId(productId);
         proUser.setInviteUserId(inviteUserId);
+        Integer isConsist = proUserMapper.selectCount(new LambdaQueryWrapper<ProUser>()
+                .eq(ProUser::getUserId, userId)
+                .eq(ProUser::getProductId, productId)
+                .eq(ProUser::getInviteUserId, inviteUserId)
+        );
+        if (isConsist > 0) {
+            return ResultTool.success();
+        }
+        proUser.setCreatedTime(LocalDateTime.now());
         int res = proUserMapper.insert(proUser);
         if (res > 0) {
             return ResultTool.success();
@@ -229,13 +261,29 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     }
 
     @Override
-    public JsonResult getInviteInfo(Long productId, String secret) {
+    public JsonResult getInviteInfo(Long productId, String secret, HttpServletRequest request) {
+        // 获取Token字符串，token 置于 header 里
+        String token = request.getHeader("token");
+        boolean tokenExpired = true;
+        if (token != null && !"".equals(token.trim())) {
+            try {
+                JwtTokenUtil.getUserNameFromToken(token);
+                tokenExpired = false;
+            } catch (ExpiredJwtException e) {
+                e.printStackTrace();
+                tokenExpired = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                tokenExpired = true;
+            }
+        }
         Long inviteUserId = Long.valueOf(userService.getUserIdByInviteCode(secret, "cong0917"));
         String productName = productMapper.getProductNameById(productId);
         String inviteUserName = userMapper.getUserNameById(inviteUserId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("productName", productName);
         jsonObject.put("inviteUserName", inviteUserName);
+        jsonObject.put("tokenExpire", tokenExpired);
         return ResultTool.success(jsonObject);
     }
 
@@ -243,7 +291,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     public JsonResult<PersonProductVo> getPersonProduct() {
         User user = UserThreadLocal.get();
         Long userId = user.getUserId();
-        List<Product> productList = productMapper.selectList(new LambdaQueryWrapper<Product>().eq(Product::getOwnerId, userId));
+        List<Product> productList = productMapper.selectList(new LambdaQueryWrapper<Product>()
+                .eq(Product::getOwnerId, userId)
+                .orderByDesc(Product::getCreatedTime));
         List<Product> shareProductList = productMapper.getShareProductByUserId(userId);
         PersonProductVo personProductVo = new PersonProductVo();
         if (productList != null && shareProductList != null) {

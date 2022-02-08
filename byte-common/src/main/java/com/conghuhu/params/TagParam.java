@@ -9,8 +9,6 @@ import lombok.Data;
 @Data
 public class TagParam {
 
-    private Long id;
-
     private String tagName;
 
     private String color;

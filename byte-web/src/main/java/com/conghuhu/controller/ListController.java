@@ -1,6 +1,7 @@
 package com.conghuhu.controller;
 
 
+import com.conghuhu.entity.List;
 import com.conghuhu.params.ListMoveParam;
 import com.conghuhu.params.ListParam;
 import com.conghuhu.result.JsonResult;
@@ -32,7 +33,7 @@ public class ListController {
 
     @ApiOperation(value = "创建新列", notes = "创建新列", produces = "application/json")
     @PostMapping("/addList")
-    public JsonResult addList(@RequestBody ListParam listParam) {
+    public JsonResult<List> addList(@RequestBody ListParam listParam) {
         return listService.addList(listParam);
     }
 

@@ -48,8 +48,9 @@ public class UserController {
         }
     }
 
+
+    @Cache(expire = 3 * 60 * 1000, name = "currentUser")
     @ApiOperation(value = "根据token查询当前用户", notes = "查询当前用户", produces = "application/json")
-    @Cache(expire = 2 * 60 * 1000, name = "currentUser")
     @GetMapping("/currentUser")
     public JsonResult<UserVo> getCurrentUser(@RequestHeader("token") String token) {
         UserVo user = userService.findUserByToken(token);

@@ -68,7 +68,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         //返回json数据
         JsonResult result = ResultTool.success(map);
         //处理编码方式，防止中文乱码的情况
-        response.setContentType("text/json;charset=utf-8");
+        response.setContentType("application/json;charset=utf-8");
         //塞到HttpServletResponse中返回给前台
         response.getWriter().write(JSON.toJSONString(result));
     }

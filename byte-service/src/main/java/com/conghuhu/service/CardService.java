@@ -77,11 +77,11 @@ public interface CardService extends IService<Card> {
     /**
      * 设置卡片的执行者
      *
-     * @param executorParam
+     * @param userId
      * @param cardId
      * @return
      */
-    JsonResult setExecutor(ExecutorParam executorParam, Long cardId);
+    JsonResult setExecutor(Long userId, Long cardId);
 
     /**
      * 通过cardId获取其所有执行者
@@ -90,4 +90,37 @@ public interface CardService extends IService<Card> {
      * @return
      */
     List<UserVo> getExecutorsByCardId(Long cardId);
+
+    /**
+     * 设置卡片背景颜色
+     *
+     * @param background
+     * @param cardId
+     * @return
+     */
+    JsonResult setCardBackground(String background, Long cardId);
+
+    /**
+     * 删除卡片的执行人
+     *
+     * @param userId
+     * @param cardId
+     * @return
+     */
+    JsonResult removeExecutor(Long userId, Long cardId);
+
+    /**
+     * 设置卡片的完成状态
+     * @param completed
+     * @param cardId
+     * @return
+     */
+    JsonResult changeCardCompleteStatus(Boolean completed, Long cardId);
+
+    /**
+     * 根据id获取卡片Vo信息
+     * @param cardId
+     * @return
+     */
+    JsonResult getCardById(Long cardId);
 }

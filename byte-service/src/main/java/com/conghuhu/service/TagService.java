@@ -27,7 +27,7 @@ public interface TagService extends IService<Tag> {
      * @param tagParam
      * @return
      */
-    JsonResult updateTag(TagParam tagParam);
+    JsonResult updateTag(Tag tagParam);
 
     /**
      * 根据项目id获取当前项目下所有的tags
@@ -50,4 +50,12 @@ public interface TagService extends IService<Tag> {
      * @return
      */
     JsonResult setTagByCardId(Long tagId, Long cardId);
+
+    /**
+     * 根据cardId删除对应的标签
+     * @param tagId
+     * @param cardId
+     * @return
+     */
+    JsonResult removeTagByCardId(Long tagId, Long cardId);
 }

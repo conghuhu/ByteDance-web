@@ -9,15 +9,10 @@ public class CardParam {
 
     private String cardname;
 
-    private String description;
-
     private Long listId;
 
     private Long productId;
 
     private Float pos;
 
-    private LocalDateTime deadline;
-
-    private LocalDateTime begintime;
 }

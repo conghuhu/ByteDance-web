@@ -27,4 +27,5 @@ public class ProductInitShowVo {
 
     private List<UserVo> memberList;
 
+    private String background;
 }

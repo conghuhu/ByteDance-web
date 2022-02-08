@@ -104,22 +104,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-
     /**
      * 配置哪些请求不拦截
      */
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(
-                "api/**",
-                "/swagger-ui.html",
                 "/swagger**/**",
                 "/webjars/**",
                 "/v2/**",
                 "/register",
                 "/mail/sendVerifyCodeToMail**",
-                "/users/modifyUserPassWord"
+                "/users/modifyUserPassWord",
+                "/product/getInviteInfo**",
+                "/websocket/**"
         );
     }
+
 
 }

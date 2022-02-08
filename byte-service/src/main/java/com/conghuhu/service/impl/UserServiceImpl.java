@@ -63,6 +63,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User userJson = (User) redisUtil.get("Token_" + userName);
         if (userJson == null) {
+            User user = getByUserName(userName);
+            if (user != null) {
+                UserVo userVo = new UserVo();
+                BeanUtils.copyProperties(user, userVo);
+                return userVo;
+            }
             return null;
         } else {
             UserVo userVo = new UserVo();

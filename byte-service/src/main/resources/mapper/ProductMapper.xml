@@ -13,6 +13,7 @@
                  LEFT JOIN byte_pro_user pu
                            on product.id = pu.productId
         where pu.userId = #{userId}
-          and pu.inviteUserId is NOT NULL;
+          and pu.inviteUserId is NOT NULL
+        ORDER BY product.created_time DESC;
     </select>
 </mapper>

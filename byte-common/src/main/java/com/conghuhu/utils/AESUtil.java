@@ -34,9 +34,14 @@ public class AESUtil {
      */
     public static byte[] encrypt(String content, String password) {
         try {
-            KeyGenerator kgen = KeyGenerator.getInstance(algorithm);
-            kgen.init(128, new SecureRandom(password.getBytes()));
-            SecretKey secretKey = kgen.generateKey();
+            //防止linux下 随机生成key
+            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            secureRandom.setSeed(password.getBytes());
+
+            KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
+            keyGen.init(secureRandom);
+
+            SecretKey secretKey = keyGen.generateKey();
             byte[] enCodeFormat = secretKey.getEncoded();
             SecretKeySpec key = new SecretKeySpec(enCodeFormat, algorithm);
             // 创建密码器
@@ -73,8 +78,11 @@ public class AESUtil {
      */
     public static byte[] decrypt(byte[] content, String password) {
         try {
+            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            secureRandom.setSeed(password.getBytes());
+
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, new SecureRandom(password.getBytes()));
+            kgen.init(secureRandom);
             SecretKey secretKey = kgen.generateKey();
             byte[] enCodeFormat = secretKey.getEncoded();
             SecretKeySpec key = new SecretKeySpec(enCodeFormat, algorithm);

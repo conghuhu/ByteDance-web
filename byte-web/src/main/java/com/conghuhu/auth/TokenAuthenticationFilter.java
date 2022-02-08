@@ -45,6 +45,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         //不需要鉴权
         if (request.getRequestURI().contains("login")) {
             chain.doFilter(request, response);
+            return;
         }
         UsernamePasswordAuthenticationToken authentication;
         JsonResult result;
@@ -69,6 +70,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
             result = ResultTool.fail(ResultCode.USER_NOT_LOGIN);
             log.error("鉴权失败");
             response.getWriter().write(JSON.toJSONString(result));
+            return;
         }
     }
 

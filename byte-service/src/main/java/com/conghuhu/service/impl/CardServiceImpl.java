@@ -2,10 +2,7 @@ package com.conghuhu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.conghuhu.entity.Card;
-import com.conghuhu.entity.CardTag;
-import com.conghuhu.entity.CardUser;
-import com.conghuhu.entity.Tag;
+import com.conghuhu.entity.*;
 import com.conghuhu.mapper.CardMapper;
 
 import com.conghuhu.mapper.CardTagMapper;
@@ -17,6 +14,9 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.conghuhu.service.UserService;
+import com.conghuhu.utils.UserThreadLocal;
+import com.conghuhu.vo.CardVo;
 import com.conghuhu.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,11 +43,13 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     private final CardTagMapper cardTagMapper;
     private final CardUserMapper cardUserMapper;
     private final CardMapper cardMapper;
+    private final UserService userService;
 
-    public CardServiceImpl(CardTagMapper cardTagMapper, CardMapper cardMapper, CardUserMapper cardUserMapper) {
+    public CardServiceImpl(CardTagMapper cardTagMapper, CardMapper cardMapper, CardUserMapper cardUserMapper, UserService userService) {
         this.cardTagMapper = cardTagMapper;
         this.cardMapper = cardMapper;
         this.cardUserMapper = cardUserMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -81,9 +84,16 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         card.setExpired(false);
         card.setClosed(false);
         card.setExecutor(false);
+        card.setDescription("");
+        card.setCreatedTime(LocalDateTime.now());
+        card.setCompleted(false);
+        User user = UserThreadLocal.get();
+        card.setCreator(user.getUserId());
 
         Card selectOne = cardMapper.selectOne(new LambdaQueryWrapper<Card>()
-                .eq(Card::getCardname, cardname));
+                .eq(Card::getCardname, cardname)
+                .eq(Card::getProductId, cardParam.getProductId())
+        );
 
         if (selectOne != null) {
             return ResultTool.fail(ResultCode.CARD_CONSIST);
@@ -149,19 +159,26 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Override
     public JsonResult setCardDeadline(CardDateParam cardDateParam, Long cardId) {
-        Card card = new Card();
-        card.setCardId(cardId);
         LocalDateTime beginTime = cardDateParam.getBeginTime();
         LocalDateTime deadline = cardDateParam.getDeadline();
-        Long dueReminder = cardDateParam.getDueReminder();
-        LocalDateTime now = LocalDateTime.now();
-        if (deadline.isBefore(now)) {
-            card.setExpired(true);
+//        Long dueReminder = cardDateParam.getDueReminder();
+        LambdaUpdateWrapper<Card> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Card::getCardId, cardId);
+        if (beginTime == null && deadline == null) {
+            updateWrapper.set(Card::getBegintime, null)
+                    .set(Card::getDeadline, null)
+                    .set(Card::getExpired, false)
+                    .set(Card::getCompleted, false);
+        } else {
+            LocalDateTime now = LocalDateTime.now();
+            if (deadline.isBefore(now)) {
+                updateWrapper.set(Card::getExpired, true);
+            }
+            updateWrapper.set(Card::getBegintime, beginTime)
+                    .set(Card::getDeadline, deadline);
         }
-        card.setBegintime(beginTime);
-        card.setDeadline(deadline);
 
-        int res = cardMapper.updateById(card);
+        int res = cardMapper.update(new Card(), updateWrapper);
         if (res > 0) {
             return ResultTool.success();
         } else {
@@ -196,8 +213,7 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public JsonResult setExecutor(ExecutorParam executorParam, Long cardId) {
-        Long userId = executorParam.getUserId();
+    public JsonResult setExecutor(Long userId, Long cardId) {
         CardUser cardUser = new CardUser();
         cardUser.setUserId(userId);
         cardUser.setCardId(cardId);
@@ -223,8 +239,80 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     }
 
     @Override
+    public JsonResult removeExecutor(Long userId, Long cardId) {
+        CardUser cardUser = new CardUser();
+        cardUser.setUserId(userId);
+        cardUser.setCardId(cardId);
+        LambdaQueryWrapper<CardUser> queryWrapper = new LambdaQueryWrapper<CardUser>().eq(CardUser::getUserId, userId).eq(CardUser::getCardId, cardId);
+        Integer selectCount = cardUserMapper.selectCount(queryWrapper);
+        if (selectCount <= 0) {
+            return ResultTool.fail(ResultCode.PARAMS_ERROR);
+        }
+        int delete = cardUserMapper.delete(queryWrapper);
+        if (delete > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
     public List<UserVo> getExecutorsByCardId(Long cardId) {
         List<UserVo> executors = cardMapper.getExecutorsByCardId(cardId);
         return executors;
+    }
+
+    @Override
+    public JsonResult setCardBackground(String background, Long cardId) {
+        Card card = new Card();
+        card.setCardId(cardId);
+        card.setBackground("#" + background);
+        int res = cardMapper.updateById(card);
+        if (res > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public JsonResult changeCardCompleteStatus(Boolean completed, Long cardId) {
+        if (completed == null || cardId == null) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+        Card card = new Card();
+        card.setCardId(cardId);
+        card.setCompleted(completed);
+        int update = cardMapper.updateById(card);
+        if (update > 0) {
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public JsonResult getCardById(Long cardId) {
+        Card card = cardMapper.selectById(cardId);
+        if (card == null) {
+            return ResultTool.fail(ResultCode.PARAMS_ERROR);
+        }
+        CardVo cardVo = new CardVo();
+        BeanUtils.copyProperties(card, cardVo);
+        List<Tag> tags = null;
+        List<UserVo> executorList = null;
+        if (card.getTag()) {
+            tags = cardMapper.getTagsByCardId(cardId);
+        }
+        if (card.getExecutor()) {
+            executorList = getExecutorsByCardId(cardId);
+        }
+
+        UserVo creator = userService.findUserVoById(card.getCreator());
+
+        cardVo.setTagList(tags != null ? tags : new ArrayList<>());
+        cardVo.setExecutorList(executorList != null ? executorList : new ArrayList<>());
+        cardVo.setCreator(creator);
+        return ResultTool.success(cardVo);
     }
 }

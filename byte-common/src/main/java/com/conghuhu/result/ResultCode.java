@@ -38,7 +38,7 @@ public enum ResultCode {
     USER_ACCOUNT_NOT_EXIST(4014, "账号不存在"),
     USER_ACCOUNT_ALREADY_EXIST(4015, "账号已存在"),
     USER_ACCOUNT_USE_BY_OTHERS(4016, "账号下线"),
-    INVITE_USER_NOT_CONSIST(4017, "邀请者用户Id不存在，请检查"),
+    INVITE_USER_PRODUCT_ERROR(4017, "邀请者用户Id或项目id有误，请检查"),
 
     /* 邮件服务 */
     MAIL_SEND_ERROR(6000, "邮件发送失败，请重试"),
