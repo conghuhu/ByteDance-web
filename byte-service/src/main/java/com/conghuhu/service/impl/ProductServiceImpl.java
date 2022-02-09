@@ -12,15 +12,14 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 import com.conghuhu.service.ProductService;
+import com.conghuhu.service.ThreadService;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.JwtTokenUtil;
 import com.conghuhu.utils.UserThreadLocal;
-import com.conghuhu.vo.CardVo;
-import com.conghuhu.vo.PersonProductVo;
-import com.conghuhu.vo.ProductInitShowVo;
-import com.conghuhu.vo.UserVo;
+import com.conghuhu.vo.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +29,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +43,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
+
+    private final ThreadService threadService;
 
     private final ProUserMapper proUserMapper;
 
@@ -63,7 +65,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     public ProductServiceImpl(TagMapper tagMapper, ListMapper listMapper,
                               CardMapper cardMapper, ProductMapper productMapper,
                               CardService cardService, ProUserMapper proUserMapper,
-                              UserService userService, UserMapper userMapper) {
+                              UserService userService, UserMapper userMapper, ThreadService threadService) {
         this.tagMapper = tagMapper;
         this.listMapper = listMapper;
         this.cardMapper = cardMapper;
@@ -72,6 +74,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         this.proUserMapper = proUserMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.threadService = threadService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -174,6 +177,14 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         product.setBackground("#" + background);
         int res = productMapper.updateById(product);
         if (res > 0) {
+            WebsocketDetail detail = WebsocketDetail.builder()
+                    .productId(productId)
+                    .background("#"+background)
+                    .build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "updateModels", "Product",
+                    new ArrayList<>(Arrays.asList("updates", "background"))
+                    , detail);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -218,6 +229,17 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         proUser.setCreatedTime(LocalDateTime.now());
         int res = proUserMapper.insert(proUser);
         if (res > 0) {
+            User user = userMapper.selectById(userId);
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(user, userVo);
+            WebsocketDetail detail = WebsocketDetail.builder()
+                    .productId(productId)
+                    .newMember(userVo)
+                    .build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "updateModels", "Product",
+                    new ArrayList<>(Arrays.asList("updates", "member"))
+                    , detail);
             return ResultTool.success();
         } else {
             return ResultTool.fail();

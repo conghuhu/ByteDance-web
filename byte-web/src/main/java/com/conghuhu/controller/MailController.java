@@ -1,14 +1,17 @@
 package com.conghuhu.controller;
 
 
+import com.conghuhu.entity.User;
 import com.conghuhu.params.MailParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.MailService;
+import com.conghuhu.service.UserService;
 import com.conghuhu.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,9 +37,12 @@ public class MailController {
     private final RedisUtil redisUtil;
     private final MailService mailService;
 
-    public MailController(MailService mailService, RedisUtil redisUtil) {
+    private final UserService userService;
+
+    public MailController(MailService mailService, RedisUtil redisUtil, UserService userService) {
         this.mailService = mailService;
         this.redisUtil = redisUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/send")
@@ -47,6 +53,12 @@ public class MailController {
     @ApiOperation(value = "向邮件中发送验证码(无需token)", notes = "actionType为register/reset \n 无需token", produces = "application/json")
     @PostMapping("/sendVerifyCodeToMail")
     public JsonResult sendVerifyCodeToMail(@RequestParam String email, @RequestParam String actionType) {
+        if (REGISTER.equals(actionType)) {
+            User user = userService.getByUserName(email);
+            if (user != null) {
+                return ResultTool.fail(ResultCode.ACCOUNT_EXIST);
+            }
+        }
         long expire = redisUtil.getExpire(email + "_code");
         if (expire <= EXTRA_EXPIRE) {
             MailParam mailParam = new MailParam();

@@ -21,5 +21,5 @@ public class WebSocketClient {
      */
     private String uri;
 
-
+    private String identification;
 }

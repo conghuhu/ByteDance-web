@@ -12,6 +12,7 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.ListService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.conghuhu.service.ThreadService;
 import com.conghuhu.service.WebSocketService;
 import com.conghuhu.vo.WebsocketDetail;
 import com.conghuhu.vo.WebsocketVo;
@@ -33,16 +34,16 @@ import java.util.Arrays;
 @Service
 public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements ListService {
 
-    @Autowired
-    private WebSocketService webSocketService;
+    private final ThreadService threadService;
 
     private final ProductMapper productMapper;
 
     private final ListMapper listMapper;
 
-    public ListServiceImpl(ListMapper listMapper, ProductMapper productMapper) {
+    public ListServiceImpl(ListMapper listMapper, ProductMapper productMapper, ThreadService threadService) {
         this.listMapper = listMapper;
         this.productMapper = productMapper;
+        this.threadService = threadService;
     }
 
     @Override
@@ -50,7 +51,6 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         Long productId = listParam.getProductId();
         Float pos = listParam.getPos();
         String listName = listParam.getListName();
-        String backgroundColor = listParam.getBackgroundColor();
 
         Integer productCount = productMapper.selectCount(new LambdaQueryWrapper<Product>()
                 .eq(Product::getId, productId));
@@ -67,6 +67,17 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         list.setCreatedTime(LocalDateTime.now());
         int res = listMapper.insert(list);
         if (res > 0) {
+
+            WebsocketDetail detail = WebsocketDetail.builder()
+                    .id(list.getId())
+                    .name(listName)
+                    .pos(pos)
+                    .closed(false)
+                    .productId(productId)
+                    .build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "addModels", "List",
+                    new ArrayList<>(Arrays.asList("updates","add")), detail);
             return ResultTool.success(list);
         } else {
             return ResultTool.fail();
@@ -93,13 +104,11 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         list.setListName(listName);
         List selectById = listMapper.selectById(listId);
         int res = listMapper.updateById(list);
+        Long productId = selectById.getProductId();
         if (res > 0) {
-            WebsocketVo websocketVo = new WebsocketVo();
-            websocketVo.setEvent("updateModels");
-            websocketVo.setTypeName("List");
-            websocketVo.setTags(new ArrayList<>(Arrays.asList("updates")));
-            websocketVo.setDetail(WebsocketDetail.builder().id(listId).name(listName).build());
-            webSocketService.sendMessageToAll(String.valueOf(selectById.getProductId()), websocketVo);
+            WebsocketDetail detail = WebsocketDetail.builder().id(listId).name(listName).productId(productId).build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "updateModels", "List", new ArrayList<>(Arrays.asList("updates")), detail);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -127,9 +136,17 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         list.setId(listId);
         list.setPos(pos);
 
+        List select = listMapper.selectById(listId);
+        if (select == null) {
+            return ResultTool.fail(ResultCode.PARAMS_ERROR);
+        }
         int res = listMapper.updateById(list);
+        Long productId = select.getProductId();
         if (res > 0) {
-            return ResultTool.success();
+            WebsocketDetail detail = WebsocketDetail.builder().id(listId).pos(pos).productId(productId).build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "moveModels", "List", new ArrayList<>(Arrays.asList("updates")), detail);
+            return ResultTool.success("移动成功");
         } else {
             return ResultTool.fail();
         }
@@ -137,9 +154,14 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
 
     @Override
     public JsonResult removeList(Long listId) {
+        List select = listMapper.selectById(listId);
         int delete = listMapper.deleteById(listId);
         // 删除列后还应将其中的card删除，包含card关联的数据（待开发）
+        Long productId = select.getProductId();
         if (delete > 0) {
+            WebsocketDetail detail = WebsocketDetail.builder().id(listId).productId(productId).build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "removeModels", "List", new ArrayList<>(Arrays.asList("updates")), detail);
             return ResultTool.success();
         } else {
             return ResultTool.fail();

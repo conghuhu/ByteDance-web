@@ -35,7 +35,7 @@ public class JwtTokenUtil {
 //        return token;
 //    }
 
-    public static String getUserNameFromToken(String token) throws ExpiredJwtException {
+    public static String getUserNameFromToken(String token) throws ExpiredJwtException,MalformedJwtException{
         String userName = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody().getSubject();
         return userName;
     }

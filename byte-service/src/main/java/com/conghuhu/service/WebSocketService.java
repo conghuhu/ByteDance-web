@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.conghuhu.entity.WebSocketClient;
+import com.conghuhu.vo.WebsocketVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,7 @@ public class WebSocketService {
         WebSocketClient client = new WebSocketClient();
         client.setSession(session);
         client.setUri(session.getRequestURI().toString());
+        client.setIdentification(productId + "-" + wsUserKey);
 
         if (!productChannels.containsKey(productId)) {
             // 频道数+1
@@ -154,10 +156,12 @@ public class WebSocketService {
      * @param productId
      * @param message
      */
-    public void sendMessageToAll(String productId, Object message) {
+    public void sendMessageToAll(String productId, WebsocketVo message) {
         try {
             for (Map.Entry<String, WebSocketClient> webSocketClientEntry : productChannels.get(productId).entrySet()) {
-                webSocketClientEntry.getValue().getSession().getAsyncRemote().sendText(JSON.toJSONString(message));
+                WebSocketClient client = webSocketClientEntry.getValue();
+                message.setIdentification(client.getIdentification());
+                client.getSession().getAsyncRemote().sendText(JSON.toJSONString(message));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,7 +4,7 @@ package com.conghuhu.vo;
 import com.conghuhu.entity.Tag;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * @create 2022-01-29 15:17
  */
 @Data
-public class CardVo {
+public class CardVo extends WebsocketDetail {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long cardId;

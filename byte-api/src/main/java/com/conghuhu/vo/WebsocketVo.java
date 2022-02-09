@@ -21,4 +21,6 @@ public class WebsocketVo {
 
     private WebsocketDetail detail;
 
+    private String identification;
+
 }

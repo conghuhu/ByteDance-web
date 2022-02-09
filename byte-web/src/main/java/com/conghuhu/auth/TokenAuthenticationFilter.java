@@ -7,6 +7,7 @@ import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -88,6 +89,8 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
             try {
                 userName = JwtTokenUtil.getUserNameFromToken(token);
             } catch (ExpiredJwtException e) {
+                throw new AccountExpiredException("token失效");
+            }catch (MalformedJwtException e){
                 throw new AccountExpiredException("token失效");
             }
             log.info("token解析出用户名" + userName);

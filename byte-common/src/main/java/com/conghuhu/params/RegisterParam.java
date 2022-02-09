@@ -18,4 +18,6 @@ public class RegisterParam {
 
     private String fullName;
 
+    private String avatar;
+
 }

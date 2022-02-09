@@ -62,6 +62,7 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         String password = registerParam.getPassword();
         String verifyCode = registerParam.getVerifyCode();
         String fullName = registerParam.getFullName();
+        String avatar = registerParam.getAvatar();
         if (StringUtils.isBlank(username)
                 || StringUtils.isBlank(password)
                 || StringUtils.isBlank(verifyCode)) {
@@ -88,7 +89,7 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         newUser.setCreatedTime(LocalDateTime.now());
         newUser.setLastLoginTime(LocalDateTime.now());
         newUser.setFullname(fullName);
-        newUser.setAvatar("https://joeschmoe.io/api/v1/random");
+        newUser.setAvatar("#" + avatar);
         userService.save(newUser);
 
         String token = jwtUtils.createToken(username, password);

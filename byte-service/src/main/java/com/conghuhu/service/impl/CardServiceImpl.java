@@ -14,11 +14,14 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.CardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.conghuhu.service.ThreadService;
 import com.conghuhu.service.UserService;
 import com.conghuhu.utils.UserThreadLocal;
 import com.conghuhu.vo.CardVo;
 import com.conghuhu.vo.UserVo;
+import com.conghuhu.vo.WebsocketDetail;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,6 +29,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -40,16 +44,18 @@ import java.util.List;
 @Service
 public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements CardService {
 
+    private final ThreadService threadService;
     private final CardTagMapper cardTagMapper;
     private final CardUserMapper cardUserMapper;
     private final CardMapper cardMapper;
     private final UserService userService;
 
-    public CardServiceImpl(CardTagMapper cardTagMapper, CardMapper cardMapper, CardUserMapper cardUserMapper, UserService userService) {
+    public CardServiceImpl(CardTagMapper cardTagMapper, CardMapper cardMapper, CardUserMapper cardUserMapper, UserService userService, ThreadService threadService) {
         this.cardTagMapper = cardTagMapper;
         this.cardMapper = cardMapper;
         this.cardUserMapper = cardUserMapper;
         this.userService = userService;
+        this.threadService = threadService;
     }
 
     @Override
@@ -60,10 +66,15 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult removeCardById(Long cardId) {
+        Card card = cardMapper.selectById(cardId);
         int res = cardMapper.deleteById(cardId);
         cardTagMapper.delete(new LambdaQueryWrapper<CardTag>().eq(CardTag::getCardId, cardId));
         cardUserMapper.delete(new LambdaQueryWrapper<CardUser>().eq(CardUser::getCardId, cardId));
         if (res > 0) {
+            WebsocketDetail detail = CardVo.builder().id(cardId).listAfterId(card.getListId()).build();
+            threadService.notifyAllMemberByProductId(card.getProductId(),
+                    "removeModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates")), detail);
             return ResultTool.success();
         } else {
             // 手动回滚
@@ -88,6 +99,8 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         card.setCreatedTime(LocalDateTime.now());
         card.setCompleted(false);
         User user = UserThreadLocal.get();
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(user, userVo);
         card.setCreator(user.getUserId());
 
         Card selectOne = cardMapper.selectOne(new LambdaQueryWrapper<Card>()
@@ -100,6 +113,18 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         }
         int res = cardMapper.insert(card);
         if (res > 0) {
+            CardVo cardVo = new CardVo();
+            cardVo.setId(card.getCardId());
+            cardVo.setName(card.getCardname());
+            cardVo.setProductId(card.getProductId());
+            cardVo.setClosed(false);
+            cardVo.setPos(card.getPos());
+            cardVo.setListAfterId(card.getListId());
+            cardVo.setCreatedTime(card.getCreatedTime());
+            cardVo.setCreator(userVo);
+            threadService.notifyAllMemberByProductId(card.getProductId(),
+                    "addModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "add")), cardVo);
             return ResultTool.success(card);
         } else {
             return ResultTool.fail();
@@ -149,8 +174,16 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         Card card = new Card();
         card.setCardId(cardId);
         card.setCardname(editParam.getEditContent());
+        Card selectById = cardMapper.selectById(cardId);
         int res = cardMapper.updateById(card);
         if (res > 0) {
+            CardVo cardVo = new CardVo();
+            cardVo.setId(cardId);
+            cardVo.setName(card.getCardname());
+            cardVo.setListId(selectById.getListId());
+            threadService.notifyAllMemberByProductId(selectById.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "name")), cardVo);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -159,12 +192,16 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Override
     public JsonResult setCardDeadline(CardDateParam cardDateParam, Long cardId) {
+        Card card = cardMapper.selectById(cardId);
+        if (card == null) {
+            return ResultTool.fail(ResultCode.CARD_ID_NOT_CONSIST);
+        }
         LocalDateTime beginTime = cardDateParam.getBeginTime();
         LocalDateTime deadline = cardDateParam.getDeadline();
-//        Long dueReminder = cardDateParam.getDueReminder();
         LambdaUpdateWrapper<Card> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Card::getCardId, cardId);
-        if (beginTime == null && deadline == null) {
+        boolean remove = beginTime == null && deadline == null;
+        if (remove) {
             updateWrapper.set(Card::getBegintime, null)
                     .set(Card::getDeadline, null)
                     .set(Card::getExpired, false)
@@ -180,6 +217,14 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
         int res = cardMapper.update(new Card(), updateWrapper);
         if (res > 0) {
+            CardVo cardVo = new CardVo();
+            cardVo.setId(cardId);
+            cardVo.setBegintime(beginTime);
+            cardVo.setDeadline(deadline);
+            cardVo.setListId(card.getListId());
+            threadService.notifyAllMemberByProductId(card.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "time", remove ? "remove" : "add")), cardVo);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -198,8 +243,19 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
             // 跨列移动,为null就是同列移动
             card.setListId(listId);
         }
+        Card selectById = cardMapper.selectById(cardId);
+        Long listBeforeId = selectById.getListId();
         int res = cardMapper.updateById(card);
         if (res > 0) {
+            WebsocketDetail detail = CardVo.builder()
+                    .id(cardId)
+                    .pos(pos)
+                    .listBeforeId(listBeforeId)
+                    .listAfterId(listId).build();
+            threadService.notifyAllMemberByProductId(selectById.getProductId(),
+                    "moveModels", "Card",
+                    new ArrayList<>(Arrays.asList("move", listBeforeId.equals(listId) ? "same" : "different"))
+                    , detail);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -230,6 +286,15 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         int updateCard = cardMapper.updateById(card);
         if (res > 0 && updateCard > 0) {
             List<UserVo> executors = getExecutorsByCardId(cardId);
+            Card selectById = cardMapper.selectById(cardId);
+            CardVo cardVo = new CardVo();
+            cardVo.setId(cardId);
+            cardVo.setListId(selectById.getListId());
+            cardVo.setExecutorList(executors);
+            threadService.notifyAllMemberByProductId(selectById.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "member"))
+                    , cardVo);
             return ResultTool.success(executors);
         } else {
             // 手动回滚
@@ -250,6 +315,16 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         }
         int delete = cardUserMapper.delete(queryWrapper);
         if (delete > 0) {
+            List<UserVo> executors = getExecutorsByCardId(cardId);
+            Card selectById = cardMapper.selectById(cardId);
+            CardVo cardVo = new CardVo();
+            cardVo.setId(cardId);
+            cardVo.setListId(selectById.getListId());
+            cardVo.setExecutorList(executors);
+            threadService.notifyAllMemberByProductId(selectById.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "member"))
+                    , cardVo);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -264,11 +339,20 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Override
     public JsonResult setCardBackground(String background, Long cardId) {
+        Card selectById = cardMapper.selectById(cardId);
         Card card = new Card();
         card.setCardId(cardId);
         card.setBackground("#" + background);
         int res = cardMapper.updateById(card);
         if (res > 0) {
+            CardVo cardVo = new CardVo();
+            cardVo.setId(cardId);
+            cardVo.setListId(selectById.getListId());
+            cardVo.setBackground("#" + background);
+            threadService.notifyAllMemberByProductId(selectById.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "background"))
+                    , cardVo);
             return ResultTool.success();
         } else {
             return ResultTool.fail();
@@ -280,11 +364,19 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         if (completed == null || cardId == null) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
         }
+        Card selectById = cardMapper.selectById(cardId);
         Card card = new Card();
         card.setCardId(cardId);
         card.setCompleted(completed);
         int update = cardMapper.updateById(card);
         if (update > 0) {
+            CardVo cardVo = new CardVo();
+            cardVo.setId(cardId);
+            cardVo.setCompleted(completed);
+            cardVo.setListId(selectById.getListId());
+            threadService.notifyAllMemberByProductId(selectById.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "time", "complete")), cardVo);
             return ResultTool.success();
         } else {
             return ResultTool.fail();

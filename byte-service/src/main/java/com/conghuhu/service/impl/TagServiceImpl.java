@@ -15,11 +15,16 @@ import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.TagService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.conghuhu.service.ThreadService;
+import com.conghuhu.vo.TagVo;
+import com.conghuhu.vo.WebsocketDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,16 +38,19 @@ import java.util.List;
 @Service
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
 
+    private final ThreadService threadService;
+
     private final TagMapper tagMapper;
 
     private final CardTagMapper cardTagMapper;
 
     private final CardMapper cardMapper;
 
-    public TagServiceImpl(TagMapper tagMapper, CardTagMapper cardTagMapper, CardMapper cardMapper) {
+    public TagServiceImpl(TagMapper tagMapper, CardTagMapper cardTagMapper, CardMapper cardMapper, ThreadService threadService) {
         this.tagMapper = tagMapper;
         this.cardTagMapper = cardTagMapper;
         this.cardMapper = cardMapper;
+        this.threadService = threadService;
     }
 
     @Override
@@ -104,6 +112,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
         cardTagMapper.delete(new LambdaQueryWrapper<CardTag>()
                 .eq(CardTag::getTagId, id));
+
         int res = tagMapper.deleteById(id);
         if (res > 0) {
             return ResultTool.success();
@@ -117,11 +126,11 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult setTagByCardId(Long tagId, Long cardId) {
-        Integer tagCount = tagMapper.selectCount(new LambdaQueryWrapper<Tag>().eq(Tag::getId, tagId));
-        Integer cardCount = cardMapper.selectCount(new LambdaQueryWrapper<Card>().eq(Card::getCardId, cardId));
-        if (tagCount <= 0) {
+        Tag tag = tagMapper.selectById(tagId);
+        Card selectCard = cardMapper.selectById(cardId);
+        if (tag == null) {
             return ResultTool.fail(ResultCode.TAG_ID_NOT_CONSIST);
-        } else if (cardCount <= 0) {
+        } else if (selectCard == null) {
             return ResultTool.fail(ResultCode.CARD_ID_NOT_CONSIST);
         }
         CardTag cardTag = new CardTag();
@@ -139,6 +148,16 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         card.setTag(true);
         int cardRes = cardMapper.updateById(card);
         if (res > 0 && cardRes > 0) {
+            TagVo tagVo = new TagVo();
+            tagVo.setTagId(tagId);
+            tagVo.setId(cardId);
+            tagVo.setName(tag.getTagName());
+            tagVo.setBackground(tag.getColor());
+            tagVo.setListAfterId(selectCard.getListId());
+            threadService.notifyAllMemberByProductId(tag.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "tags", "add"))
+                    , tagVo);
             return ResultTool.success();
         } else {
             // 手动回滚
@@ -150,6 +169,11 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public JsonResult removeTagByCardId(Long tagId, Long cardId) {
+        Card selectCard = cardMapper.selectById(cardId);
+        if (selectCard == null) {
+            return ResultTool.fail(ResultCode.CARD_ID_NOT_CONSIST);
+        }
+
         LambdaQueryWrapper<CardTag> queryWrapper = new LambdaQueryWrapper<CardTag>()
                 .eq(CardTag::getTagId, tagId)
                 .eq(CardTag::getCardId, cardId);
@@ -159,6 +183,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
         int delete = cardTagMapper.delete(queryWrapper);
         if (delete > 0) {
+            TagVo tagVo = new TagVo();
+            tagVo.setTagId(tagId);
+            tagVo.setId(cardId);
+            tagVo.setListAfterId(selectCard.getListId());
+            threadService.notifyAllMemberByProductId(selectCard.getProductId(),
+                    "updateModels", "Card",
+                    new ArrayList<>(Arrays.asList("updates", "tags", "remove"))
+                    , tagVo);
             return ResultTool.success();
         } else {
             // 手动回滚

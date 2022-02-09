@@ -20,5 +20,4 @@ public class UserVo {
 
     private String fullname;
 
-
 }
