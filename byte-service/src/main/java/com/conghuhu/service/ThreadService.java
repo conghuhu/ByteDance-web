@@ -3,6 +3,7 @@ package com.conghuhu.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.conghuhu.entity.CardTag;
 import com.conghuhu.mapper.CardTagMapper;
+import com.conghuhu.mapper.CardUserMapper;
 import com.conghuhu.vo.WebsocketDetail;
 import com.conghuhu.vo.WebsocketVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ import java.util.List;
 @Service
 public class ThreadService {
 
+    private final CardUserMapper cardUserMapper;
     private final WebSocketService webSocketService;
 
-    public ThreadService(WebSocketService webSocketService) {
+    public ThreadService(WebSocketService webSocketService, CardUserMapper cardUserMapper) {
         this.webSocketService = webSocketService;
+        this.cardUserMapper = cardUserMapper;
     }
 
     @Async
@@ -37,4 +40,8 @@ public class ThreadService {
         webSocketService.sendMessageToAll(String.valueOf(productId), websocketVo);
     }
 
+    @Async
+    public void deleteCardUserByProductId(Long productId, Long userId){
+        Integer integer = cardUserMapper.deleteCardUserByProductId(productId, userId);
+    }
 }

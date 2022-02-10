@@ -18,6 +18,7 @@ import com.conghuhu.utils.JwtTokenUtil;
 import com.conghuhu.utils.UserThreadLocal;
 import com.conghuhu.vo.*;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -62,10 +63,12 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     private final UserMapper userMapper;
 
+    private final CardUserMapper cardUserMapper;
+
     public ProductServiceImpl(TagMapper tagMapper, ListMapper listMapper,
                               CardMapper cardMapper, ProductMapper productMapper,
                               CardService cardService, ProUserMapper proUserMapper,
-                              UserService userService, UserMapper userMapper, ThreadService threadService) {
+                              UserService userService, UserMapper userMapper, ThreadService threadService, CardUserMapper cardUserMapper) {
         this.tagMapper = tagMapper;
         this.listMapper = listMapper;
         this.cardMapper = cardMapper;
@@ -75,6 +78,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         this.userService = userService;
         this.userMapper = userMapper;
         this.threadService = threadService;
+        this.cardUserMapper = cardUserMapper;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -179,7 +183,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         if (res > 0) {
             WebsocketDetail detail = WebsocketDetail.builder()
                     .productId(productId)
-                    .background("#"+background)
+                    .background("#" + background)
                     .build();
             threadService.notifyAllMemberByProductId(productId,
                     "updateModels", "Product",
@@ -322,6 +326,56 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
             personProductVo.setProductList(productList);
             personProductVo.setShareProductList(shareProductList);
             return ResultTool.success(personProductVo);
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Override
+    public JsonResult changeProductName(Long productId, String productName) {
+        Product product = new Product();
+        product.setId(productId);
+        product.setProductName(productName);
+        int res = productMapper.updateById(product);
+        if (res > 0) {
+            WebsocketDetail detail = WebsocketDetail.builder()
+                    .name(productName)
+                    .build();
+            threadService.notifyAllMemberByProductId(productId,
+                    "updateModels", "Product",
+                    new ArrayList<>(Arrays.asList("updates", "name"))
+                    , detail);
+            return ResultTool.success();
+        } else {
+            return ResultTool.fail();
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public JsonResult quitProduct(Long productId, Long userId) {
+        return threadDeleteCardUser(productId, userId);
+    }
+
+    @Override
+    public JsonResult kickOutMember(Long productId, Long userId) {
+        User user = UserThreadLocal.get();
+        Product product = productMapper.selectById(user.getUserId());
+        if (!product.getOwnerId().equals(user.getUserId())) {
+            return ResultTool.fail(ResultCode.NO_PERMISSION);
+        }
+
+        return threadDeleteCardUser(productId, userId);
+    }
+
+    @NotNull
+    private JsonResult threadDeleteCardUser(Long productId, Long userId) {
+        int delete = proUserMapper.delete(new LambdaQueryWrapper<ProUser>()
+                .eq(ProUser::getProductId, productId)
+                .eq(ProUser::getUserId, userId));
+        if (delete > 0) {
+            threadService.deleteCardUserByProductId(productId, userId);
+            return ResultTool.success();
         } else {
             return ResultTool.fail();
         }

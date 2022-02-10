@@ -11,6 +11,7 @@ import com.conghuhu.service.ProductService;
 import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
+import com.qiniu.util.Json;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -111,6 +112,24 @@ public class ProductController {
     @GetMapping("/getMemberStatus/{productId}")
     public JsonResult getMemberStatus(@PathVariable Long productId) {
         return productService.getMemberStatus(productId);
+    }
+
+    @ApiOperation(value = "更改项目名称", notes = "更改项目名称", produces = "application/json")
+    @PostMapping("/changeProductName/{productId}")
+    public JsonResult changeProductName(@PathVariable Long productId,@RequestParam("productName") String productName){
+        return productService.changeProductName(productId,productName);
+    }
+
+    @ApiOperation(value = "成员退出项目", notes = "成员退出项目", produces = "application/json")
+    @PostMapping("/quitProduct/{productId}/{userId}")
+    public JsonResult quitProduct(@PathVariable Long productId, @PathVariable Long userId){
+        return productService.quitProduct(productId,userId);
+    }
+
+    @ApiOperation(value = "项目ownner踢人", notes = "项目ownner踢人，不是ownner会报错，只有ownner能踢人", produces = "application/json")
+    @PostMapping("/kickOutMember/{productId}/{userId}")
+    public JsonResult kickOutMember(@PathVariable Long productId, @PathVariable Long userId){
+        return productService.kickOutMember(productId,userId);
     }
 
 }
