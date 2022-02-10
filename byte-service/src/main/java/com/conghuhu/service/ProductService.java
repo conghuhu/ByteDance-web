@@ -102,4 +102,10 @@ public interface ProductService extends IService<Product> {
      * @return
      */
     JsonResult<PersonProductVo> getPersonProduct();
+
+    JsonResult changeProductName(Long productId, String productName);
+
+    JsonResult quitProduct(Long productId, Long userId);
+
+    JsonResult kickOutMember(Long productId, Long userId);
 }

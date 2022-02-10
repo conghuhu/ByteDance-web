@@ -2,4 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.conghuhu.mapper.CardUserMapper">
 
+    <delete id="deleteCardUserByProductId">
+        DELETE
+        from byte_card_user
+        where userId = #{userId}
+          and cardId in(
+            SELECT cardId from byte_card where productId = #{productId}
+        );
+    </delete>
 </mapper>

@@ -74,7 +74,7 @@ public class MailController {
             redisUtil.set(email + "_code", randCode);
             redisUtil.setExpire(email + "_code", 240);
             model.put("verifyCode", randCode);
-            mailParam.setSubject("测试模板");
+            mailParam.setSubject("ToDo团队");
             mailParam.setTo(email);
             mailParam.setTemplateFile("verifyCode.html");
             mailParam.setModel(model);
