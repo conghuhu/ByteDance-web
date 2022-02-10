@@ -3,9 +3,9 @@ spring:
     name: byte-prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://150.158.97.5:3306/qingxun?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
+    url: jdbc:mysql://*****:3306/qingxun?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
     username: root
-    password: cong0917
+    password: ****
     hikari:
       minimum-idle: 10
       maximum-pool-size: 20
