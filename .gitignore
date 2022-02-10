@@ -34,4 +34,4 @@ target/
 .mvn
 mvnw*
 
-.yml
+*.yml
