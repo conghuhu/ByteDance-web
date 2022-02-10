@@ -33,3 +33,5 @@ target/
 *.ipr
 .mvn
 mvnw*
+
+.yml
