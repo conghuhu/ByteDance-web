@@ -13,6 +13,7 @@ spring:
       idle-timeout: 60000
   redis:
     host: *****
+
     port: 6379
   servlet:
     multipart:

@@ -11,9 +11,10 @@ spring:
     # 编码集
     default-encoding: UTF-8
     #发送邮件的账户
-    username: ****@163.com
+    username: ******@163.com
     #授权码
-    password: B*******
+    password: ******
+
     test-connection: false
     port: 465
     properties:
