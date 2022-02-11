@@ -11,7 +11,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface Cache {
 
-    long expire() default 1 * 60 * 1000;
+    /**
+     * 有效期，秒，默认值是4小时
+     * @return
+     */
+    long expire() default 60 * 60 * 4;
 
     String name() default "";
 

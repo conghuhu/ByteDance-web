@@ -142,4 +142,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return ResultTool.fail();
         }
     }
+
+    @Override
+    public JsonResult setNewUserStatus(Boolean isNews) {
+        User user = UserThreadLocal.get();
+        int res = userMapper.update(user, new LambdaUpdateWrapper<User>()
+                .eq(User::getUserId, user.getUserId())
+                .set(User::getIsNews, isNews));
+        if (res > 0) {
+            return ResultTool.success("修改用户状态成功");
+        } else {
+            return ResultTool.fail();
+        }
+    }
 }

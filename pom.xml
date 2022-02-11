@@ -28,7 +28,7 @@
         <spring-security.version>2.4.1</spring-security.version>
         <lombok.version>1.18.20</lombok.version>
         <swagger2.version>2.9.2</swagger2.version>
-        <fastjson.version>1.2.62</fastjson.version>
+        <fastjson.version>1.2.79</fastjson.version>
         <jwt.version>0.9.1</jwt.version>
         <freemarker.version>2.3.31</freemarker.version>
     </properties>

@@ -1,22 +1,18 @@
 package com.conghuhu.controller;
 
 
-import com.conghuhu.cache.Cache;
 import com.conghuhu.params.UserPasswordParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.entity.User;
 import com.conghuhu.service.UserService;
-import com.conghuhu.utils.AESUtil;
-import com.conghuhu.utils.HexConversion;
 import com.conghuhu.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 
 /**
  * <p>
@@ -49,7 +45,6 @@ public class UserController {
     }
 
 
-    @Cache(expire = 3 * 60 * 1000, name = "currentUser")
     @ApiOperation(value = "根据token查询当前用户", notes = "查询当前用户", produces = "application/json")
     @GetMapping("/currentUser")
     public JsonResult<UserVo> getCurrentUser(@RequestHeader("token") String token) {
@@ -63,7 +58,7 @@ public class UserController {
 
     @ApiOperation(value = "获取当前用户的邀请码", notes = "获取当前用户的邀请码", produces = "application/json")
     @GetMapping("/getInviteCode/{userId}")
-    public JsonResult getInviteCode(@PathVariable Long userId) throws Exception {
+    public JsonResult getInviteCode(@PathVariable Long userId) {
         String s = String.valueOf(userId);
         String secret = userService.getInviteCode(s, "cong0917");
         if (!secret.equals("") && secret != null) {
@@ -90,4 +85,11 @@ public class UserController {
     public JsonResult modifyUserPassWord(@RequestBody UserPasswordParam userPasswordParam) {
         return userService.modifyUserPassWord(userPasswordParam);
     }
+
+    @ApiOperation(value = "更改用户状态", notes = "是否为新用户", produces = "application/json")
+    @PostMapping("/setNewUserStatus")
+    public JsonResult setNewUserStatus(@RequestParam("isNews") Boolean isNews) {
+        return userService.setNewUserStatus(isNews);
+    }
+
 }

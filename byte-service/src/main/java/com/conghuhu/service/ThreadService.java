@@ -41,7 +41,7 @@ public class ThreadService {
     }
 
     @Async
-    public void deleteCardUserByProductId(Long productId, Long userId){
-        Integer integer = cardUserMapper.deleteCardUserByProductId(productId, userId);
+    public void deleteCardUserByProductId(Long productId, Long userId) {
+        cardUserMapper.deleteCardUserByProductId(productId, userId);
     }
 }

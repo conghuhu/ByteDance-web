@@ -2,6 +2,7 @@ package com.conghuhu.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.conghuhu.entity.*;
 import com.conghuhu.mapper.*;
@@ -360,7 +361,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     @Override
     public JsonResult kickOutMember(Long productId, Long userId) {
         User user = UserThreadLocal.get();
-        Product product = productMapper.selectById(user.getUserId());
+        Product product = productMapper.selectById(productId);
         if (!product.getOwnerId().equals(user.getUserId())) {
             return ResultTool.fail(ResultCode.NO_PERMISSION);
         }

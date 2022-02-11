@@ -90,6 +90,7 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, User> implement
         newUser.setLastLoginTime(LocalDateTime.now());
         newUser.setFullname(fullName);
         newUser.setAvatar("#" + avatar);
+        newUser.setIsNews(true);
         userService.save(newUser);
 
         String token = jwtUtils.createToken(username, password);

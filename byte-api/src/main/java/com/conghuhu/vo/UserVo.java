@@ -20,4 +20,6 @@ public class UserVo {
 
     private String fullname;
 
+    private Boolean isNews;
+
 }

@@ -97,4 +97,6 @@ public class MailServiceImpl extends ServiceImpl<MailMapper, Mail> implements Ma
         mailSender.send(messageHelper.getMimeMessage());
     }
 
+
+
 }

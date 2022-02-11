@@ -64,4 +64,6 @@ public interface UserService extends IService<User> {
      * @return
      */
     JsonResult modifyUserPassWord(UserPasswordParam userPasswordParam);
+
+    JsonResult setNewUserStatus(Boolean isNews);
 }

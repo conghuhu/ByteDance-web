@@ -1,5 +1,6 @@
 package com.conghuhu.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -57,4 +58,7 @@ public class User implements Serializable {
     private LocalDateTime lastLoginTime;
 
     private String token;
+
+    @TableField("isNews")
+    private Boolean isNews;
 }
