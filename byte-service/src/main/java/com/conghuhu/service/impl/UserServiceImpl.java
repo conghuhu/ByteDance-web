@@ -71,8 +71,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             return null;
         } else {
+            Boolean isNews = userJson.getIsNews();
             UserVo userVo = new UserVo();
-            BeanUtils.copyProperties(userJson, userVo);
+            if (isNews) {
+                User user = getByUserName(userName);
+                BeanUtils.copyProperties(user, userVo);
+            } else {
+                BeanUtils.copyProperties(userJson, userVo);
+            }
             return userVo;
         }
     }
@@ -146,6 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public JsonResult setNewUserStatus(Boolean isNews) {
         User user = UserThreadLocal.get();
+        user.setToken(null);
         int res = userMapper.update(user, new LambdaUpdateWrapper<User>()
                 .eq(User::getUserId, user.getUserId())
                 .set(User::getIsNews, isNews));

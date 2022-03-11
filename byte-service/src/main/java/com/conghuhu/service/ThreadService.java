@@ -1,7 +1,9 @@
 package com.conghuhu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.conghuhu.entity.Card;
 import com.conghuhu.entity.CardTag;
+import com.conghuhu.mapper.CardMapper;
 import com.conghuhu.mapper.CardTagMapper;
 import com.conghuhu.mapper.CardUserMapper;
 import com.conghuhu.vo.WebsocketDetail;
@@ -21,12 +23,14 @@ import java.util.List;
 @Service
 public class ThreadService {
 
+    private final CardMapper cardMapper;
     private final CardUserMapper cardUserMapper;
     private final WebSocketService webSocketService;
 
-    public ThreadService(WebSocketService webSocketService, CardUserMapper cardUserMapper) {
+    public ThreadService(WebSocketService webSocketService, CardUserMapper cardUserMapper, CardMapper cardMapper) {
         this.webSocketService = webSocketService;
         this.cardUserMapper = cardUserMapper;
+        this.cardMapper = cardMapper;
     }
 
     @Async
@@ -43,5 +47,11 @@ public class ThreadService {
     @Async
     public void deleteCardUserByProductId(Long productId, Long userId) {
         cardUserMapper.deleteCardUserByProductId(productId, userId);
+    }
+
+    @Async
+    public void deleteCardByListId(Long listId) {
+        cardMapper.delete(new LambdaQueryWrapper<Card>()
+                .eq(Card::getListId, listId));
     }
 }

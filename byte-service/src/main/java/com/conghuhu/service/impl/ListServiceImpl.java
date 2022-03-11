@@ -77,7 +77,7 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
                     .build();
             threadService.notifyAllMemberByProductId(productId,
                     "addModels", "List",
-                    new ArrayList<>(Arrays.asList("updates","add")), detail);
+                    new ArrayList<>(Arrays.asList("updates", "add")), detail);
             return ResultTool.success(list);
         } else {
             return ResultTool.fail();
@@ -159,6 +159,7 @@ public class ListServiceImpl extends ServiceImpl<ListMapper, List> implements Li
         // 删除列后还应将其中的card删除，包含card关联的数据（待开发）
         Long productId = select.getProductId();
         if (delete > 0) {
+            threadService.deleteCardByListId(listId);
             WebsocketDetail detail = WebsocketDetail.builder().id(listId).productId(productId).build();
             threadService.notifyAllMemberByProductId(productId,
                     "removeModels", "List", new ArrayList<>(Arrays.asList("updates")), detail);

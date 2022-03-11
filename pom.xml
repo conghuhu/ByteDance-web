@@ -17,6 +17,7 @@
         <module>byte-common</module>
     </modules>
 
+
     <!--版本号管理-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
