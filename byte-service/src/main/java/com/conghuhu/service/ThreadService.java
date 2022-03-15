@@ -2,18 +2,13 @@ package com.conghuhu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.conghuhu.entity.Card;
-import com.conghuhu.entity.CardTag;
 import com.conghuhu.mapper.CardMapper;
-import com.conghuhu.mapper.CardTagMapper;
 import com.conghuhu.mapper.CardUserMapper;
 import com.conghuhu.vo.WebsocketDetail;
 import com.conghuhu.vo.WebsocketVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,4 +49,5 @@ public class ThreadService {
         cardMapper.delete(new LambdaQueryWrapper<Card>()
                 .eq(Card::getListId, listId));
     }
+
 }
