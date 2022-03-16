@@ -1,10 +1,15 @@
 package com.conghuhu.utils;
 
+import com.aliyun.tair.tairbloom.TairBloom;
 import com.aliyun.tair.tairhash.TairHash;
 import com.aliyun.tair.tairhash.params.ExhsetParams;
 import com.aliyun.tair.tairroaring.TairRoaring;
 import com.aliyun.tair.tairstring.TairString;
 import com.aliyun.tair.tairstring.params.CasParams;
+import com.aliyun.tair.tairts.TairTs;
+import com.aliyun.tair.tairts.params.ExtsAttributesParams;
+import com.aliyun.tair.tairts.results.ExtsDataPointResult;
+import com.aliyun.tair.tairts.results.ExtsSkeyResult;
 import com.conghuhu.config.JedisConfig;
 import com.conghuhu.pubSub.MessageListener;
 import com.conghuhu.pubSub.SubClient;
@@ -15,6 +20,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.SetParams;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -286,6 +293,129 @@ public class JedisUtil {
             jedis.close();
         }
         return -1;
+    }
+
+    /**
+     * 创建一个布隆过滤器
+     *
+     * @param key
+     * @param capacity
+     * @param errorRate
+     * @return
+     */
+    public static boolean createBloom(String key, long capacity, double errorRate) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            TairBloom tairBloom = new TairBloom(jedis);
+            String result = tairBloom.bfreserve(key, capacity, errorRate);
+            if ("OK".equals(result)) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return false;
+    }
+
+    /**
+     * 添加元素至布隆过滤器中
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public static boolean addItemToBloom(String key, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            TairBloom tairBloom = new TairBloom(jedis);
+            Boolean res = tairBloom.bfadd(key, value);
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return false;
+    }
+
+    /**
+     * 判断元素是否可能存在布隆过滤器中
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public static boolean existItemInBloom(String key, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            TairBloom tairBloom = new TairBloom(jedis);
+            Boolean res = tairBloom.bfexists(key, value);
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return false;
+    }
+
+    /**
+     * 向Ts中添加序列
+     *
+     * @param pKey
+     * @param sKey
+     * @param ts
+     * @param value
+     * @return
+     */
+    public static boolean addItemToTs(String pKey, String sKey, String ts, double value, long expireTime, String label) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            TairTs tairTs = new TairTs(jedis);
+            ExtsAttributesParams extsAttributesParams = new ExtsAttributesParams();
+            extsAttributesParams.dataEt(expireTime);
+            extsAttributesParams.labels(new ArrayList<>(Arrays.asList(label)));
+            String res = tairTs.extsadd(pKey, sKey, ts, value, extsAttributesParams);
+            if ("OK".equals(res)) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return false;
+    }
+
+    /**
+     * 获取最近的一组Datapoint数据
+     *
+     * @param pKey
+     * @param sKey
+     * @param fromTs
+     * @param toTs
+     * @return
+     */
+    public static ArrayList<ExtsDataPointResult> getLastTsValue(String pKey, String sKey, String fromTs, String toTs) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            TairTs tairTs = new TairTs(jedis);
+            ExtsSkeyResult result = tairTs.extsrange(pKey, sKey, fromTs, toTs);
+            ArrayList<ExtsDataPointResult> dataPoints = result.getDataPoints();
+            return dataPoints;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return null;
     }
 
     /**

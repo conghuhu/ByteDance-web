@@ -108,4 +108,6 @@ public interface ProductService extends IService<Product> {
     JsonResult quitProduct(Long productId, Long userId);
 
     JsonResult kickOutMember(Long productId, Long userId);
+
+    JsonResult getActiveProductChannel();
 }

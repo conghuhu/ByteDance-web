@@ -139,12 +139,13 @@ public class WebSocketService {
             }
             int size = JedisUtil.getAllFields(productId).size();
             if (size == 0) {
-                JedisUtil.removeItemInSet(ONLINE_CHANNELS, productId);
                 JedisUtil.deleteKey(productId);
+                JedisUtil.removeItemInSet(ONLINE_CHANNELS, productId);
+                productChannels.remove(productId);
             }
-            log.info("productId - userId - sessionId: " + productId + "-" + wsUserKey + "用户退出" + "当前频道在线人数为:" + size);
+            log.info("productId - userId - sessionId: " + wsUserKey + "用户退出" + "当前频道在线人数为:" + size);
         } else {
-            log.info("productId - userId - sessionId: " + productId + "-" + wsUserKey + "用户退出出问题了");
+            log.info("productId - userId - sessionId: " + wsUserKey + "用户退出出问题了");
         }
     }
 

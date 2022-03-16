@@ -30,14 +30,17 @@ public class JedisConfig extends CachingConfigurerSupport {
 
     public JedisPool redisPoolFactory() {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(32);
-        jedisPoolConfig.setMaxIdle(32);
-        jedisPoolConfig.setMinIdle(20);
+        jedisPoolConfig.setMaxTotal(16);
+        jedisPoolConfig.setMaxIdle(16);
+        jedisPoolConfig.setMinIdle(8);
+        jedisPoolConfig.setMaxWaitMillis(10000);
+        jedisPoolConfig.setTestOnBorrow(true);
+        jedisPoolConfig.setTestWhileIdle(true);
+        jedisPoolConfig.setTimeBetweenEvictionRunsMillis(5000);
 
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, HOST, PORT, DEFAULT_CONNECTION_TIMEOUT,
                 DEFAULT_SO_TIMEOUT, PASSWORD, 0, null);
-        log.info("JedisPool注入成功！！");
-        log.info("redis地址：" + HOST + ":" + PORT);
+        log.info("JedisPool注入成功！！redis地址：" + HOST + ":" + PORT);
         return jedisPool;
     }
 }

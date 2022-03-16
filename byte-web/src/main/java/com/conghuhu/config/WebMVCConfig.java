@@ -1,7 +1,6 @@
 package com.conghuhu.config;
 
 import com.conghuhu.handler.interceptor.MyInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -24,7 +23,7 @@ public class WebMVCConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // 跨域配置
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://101.201.143.127/")
+                .allowedOrigins("http://localhost:3000", "http://localhost:3333","http://101.201.143.127/")
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
 
