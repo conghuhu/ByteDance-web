@@ -365,7 +365,8 @@ public class JedisUtil {
     }
 
     /**
-     * 向Ts中添加序列
+     * 向Ts中添加序列(注意并发问题)
+     * 当分布式场景下，注意时间戳的插入顺序
      *
      * @param pKey
      * @param sKey
@@ -381,7 +382,7 @@ public class JedisUtil {
             ExtsAttributesParams extsAttributesParams = new ExtsAttributesParams();
             extsAttributesParams.dataEt(expireTime);
             extsAttributesParams.labels(new ArrayList<>(Arrays.asList(label)));
-            String res = tairTs.extsadd(pKey, sKey, ts, value, extsAttributesParams);
+            String res = tairTs.extsrawmodify(pKey, sKey, ts, value, extsAttributesParams);
             if ("OK".equals(res)) {
                 return true;
             }

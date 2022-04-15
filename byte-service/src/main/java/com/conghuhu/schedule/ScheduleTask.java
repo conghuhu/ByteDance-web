@@ -58,7 +58,7 @@ public class ScheduleTask {
                 currentOnlineCount.doubleValue(), 1000 * 60 * 5, ONLINE_USER_COUNT);
     }
 
-    @Scheduled(cron = "15/1 * * * * ? ")
+    @Scheduled(cron = "15/2 * * * * ? ")
     public void uploadAllActiveProductCount() {
         Set<String> setItem = JedisUtil.getSetItem(WebSocketService.ONLINE_CHANNELS);
         long curTimeStamp = getCurTimeStamp();

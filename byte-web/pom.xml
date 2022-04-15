@@ -74,6 +74,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>byte_web</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
