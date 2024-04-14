@@ -27,6 +27,6 @@ sudo docker run -d -p 8090:8090 \
  -e DB_USERNAME="root" -e DB_PASSWORD="cong0917" \
  -e REDIS_HOST="$IP_ADDRESS" -e REDIS_PORT="6379" \
  -v /mnt/logs/plcs-server:/mnt/logs/plcs-server \
- --name byte-todo-server byte-todo-server
+ --name byte-todo-server byte-todo-server:latest
 
 echo "byte-todo-server run successfully"
