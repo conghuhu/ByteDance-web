@@ -5,13 +5,11 @@ import com.conghuhu.entity.Product;
 import com.conghuhu.params.CreateProductParam;
 import com.conghuhu.params.InviteParam;
 import com.conghuhu.result.JsonResult;
-import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
 import com.conghuhu.service.ProductService;
 import com.conghuhu.vo.PersonProductVo;
 import com.conghuhu.vo.ProductInitShowVo;
 import com.conghuhu.vo.UserVo;
-import com.qiniu.util.Json;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -130,6 +128,12 @@ public class ProductController {
     @PostMapping("/kickOutMember/{productId}/{userId}")
     public JsonResult kickOutMember(@PathVariable Long productId, @PathVariable Long userId){
         return productService.kickOutMember(productId,userId);
+    }
+
+    @ApiOperation(value = "获取活跃的product频道", notes = "获取活跃的product频道", produces = "application/json")
+    @GetMapping("/getActiveProductChannel")
+    public JsonResult<List<Product>> getActiveProductChannel(){
+        return productService.getActiveProductChannel();
     }
 
 }

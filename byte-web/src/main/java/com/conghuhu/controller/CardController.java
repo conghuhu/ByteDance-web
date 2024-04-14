@@ -40,7 +40,6 @@ public class CardController {
     }
 
     @ApiOperation(value = "根据卡片id获取卡片信息", notes = "根据卡片id获取卡片信息", produces = "application/json")
-
     @GetMapping("/queryById/{cardId}")
     public JsonResult<CardVo> getCardById(@PathVariable Long cardId) {
         return cardService.getCardById(cardId);

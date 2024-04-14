@@ -8,6 +8,7 @@ import com.conghuhu.mapper.ProUserMapper;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
+import com.conghuhu.utils.JedisUtil;
 import com.conghuhu.utils.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author conghuhu
@@ -68,9 +67,17 @@ public class MyInterceptor implements HandlerInterceptor {
 
             User user = UserThreadLocal.get();
             log.info("线程变量获取到：" + user.getFullname() + " " + user.getUsername());
+
+            Long userId = user.getUserId();
+            boolean isExist = JedisUtil.existItemInBloom(productId +"Bloom", String.valueOf(userId));
+            if (!isExist) {
+                JsonResult result = ResultTool.fail(ResultCode.PRODUCT_NOT_PERMISSION);
+                response.getWriter().write(JSON.toJSONString(result));
+                return false;
+            }
             Integer selectCount = proUserMapper.selectCount(new LambdaQueryWrapper<ProUser>()
                     .eq(ProUser::getProductId, productId)
-                    .eq(ProUser::getUserId, user.getUserId()));
+                    .eq(ProUser::getUserId, userId));
             if (selectCount > 0) {
                 return true;
             }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ public class WebsocketDetail {
 
     private String name;
 
+    private Long listId;
+
     private Long productId;
 
     private Long listAfterId;
@@ -33,4 +36,19 @@ public class WebsocketDetail {
     private UserVo newMember;
 
     private String background;
+
+    private Long tagId;
+
+    private List<UserVo> executorList;
+
+    private LocalDateTime begintime;
+
+    private LocalDateTime deadline;
+
+    private UserVo creator;
+
+    private LocalDateTime createdTime;
+
+    private String description;
+
 }

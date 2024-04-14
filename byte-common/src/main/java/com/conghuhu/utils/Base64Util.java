@@ -1,7 +1,6 @@
 package com.conghuhu.utils;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 /**
  * @author conghuhu
@@ -15,7 +14,7 @@ public class Base64Util {
      * @throws Exception
      */
     public static byte[] decryBASE64(String key) throws Exception {
-        return (new BASE64Decoder()).decodeBuffer(key);
+        return Base64.getDecoder().decode(key);
     }
 
     /***
@@ -25,7 +24,7 @@ public class Base64Util {
      * @throws Exception
      */
     public static String encryptBASE64(byte[] key) throws Exception {
-        return (new BASE64Encoder()).encode(key);
+        return Base64.getEncoder().encodeToString(key);
     }
 
 }

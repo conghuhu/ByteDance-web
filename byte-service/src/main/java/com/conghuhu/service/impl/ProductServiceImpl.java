@@ -2,7 +2,6 @@ package com.conghuhu.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.conghuhu.entity.*;
 import com.conghuhu.mapper.*;
@@ -11,18 +10,14 @@ import com.conghuhu.params.InviteParam;
 import com.conghuhu.result.JsonResult;
 import com.conghuhu.result.ResultCode;
 import com.conghuhu.result.ResultTool;
-import com.conghuhu.service.CardService;
-import com.conghuhu.service.ProductService;
-import com.conghuhu.service.ThreadService;
-import com.conghuhu.service.UserService;
+import com.conghuhu.service.*;
+import com.conghuhu.utils.JedisUtil;
 import com.conghuhu.utils.JwtTokenUtil;
 import com.conghuhu.utils.UserThreadLocal;
 import com.conghuhu.vo.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -33,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -148,11 +144,14 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         int res = productMapper.insert(product);
 
         ProUser proUser = new ProUser();
-        proUser.setProductId(product.getId());
-        proUser.setUserId(product.getOwnerId());
+        Long productId = product.getId();
+        Long ownerId = product.getOwnerId();
+        proUser.setProductId(productId);
+        proUser.setUserId(ownerId);
         proUser.setCreatedTime(LocalDateTime.now());
         int insert = proUserMapper.insert(proUser);
         if (res > 0 && insert > 0) {
+            JedisUtil.addItemToBloom(productId + "Bloom", String.valueOf(ownerId));
             return ResultTool.success(product);
         } else {
             // 手动回滚
@@ -234,6 +233,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         proUser.setCreatedTime(LocalDateTime.now());
         int res = proUserMapper.insert(proUser);
         if (res > 0) {
+            JedisUtil.addItemToBloom(productId + "Bloom", String.valueOf(userId));
             User user = userMapper.selectById(userId);
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(user, userVo);
@@ -264,6 +264,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         proUserMapper.delete(new LambdaQueryWrapper<ProUser>().eq(ProUser::getProductId, id));
         // 还应删除对应的card以及相关的关联
         if (delete > 0) {
+            JedisUtil.deleteKey(id + "Bloom");
             return ResultTool.success();
         } else {
             // 手动回滚
@@ -367,6 +368,17 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
 
         return threadDeleteCardUser(productId, userId);
+    }
+
+    @Override
+    public JsonResult getActiveProductChannel() {
+        Set<String> setItem = JedisUtil.getSetItem(WebSocketService.ONLINE_CHANNELS);
+        List<Product> res = new ArrayList<>();
+        setItem.forEach(productId -> {
+            Product product = productMapper.selectById(productId);
+            res.add(product);
+        });
+        return ResultTool.success(res);
     }
 
     @NotNull

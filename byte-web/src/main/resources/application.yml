@@ -2,7 +2,7 @@ spring:
   application:
     name: byte-service
   profiles:
-    active: prod
+    active: dev
   mail:
     #smtp服务主机  qq邮箱则为smtp.qq.com
     host: smtp.163.com
