@@ -20,7 +20,7 @@ echo "byte-todo-server image deleted"
 
 sudo docker build -f ./Dockerfile -t byte-todo-server .
 
-echo "build byte-todo-server successfully"
+echo "build byte-todo-server successfully!!!"
 
 sudo docker run -d -p 8090:8090 \
  -e DB_URL="jdbc:mysql://$IP_ADDRESS:3306/qingxun?autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&lowerCaseTableNames=1&characterEncoding=utf8" \
