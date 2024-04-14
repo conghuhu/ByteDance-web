@@ -3,17 +3,17 @@ spring:
     name: byte-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/qingxun?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
-    username: root
-    password: *****
+    url: ${DB_URL:jdbc:mysql://121.250.209.74:3306/qingxun?autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&lowerCaseTableNames=1&characterEncoding=utf8}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:cong0917}
     hikari:
       minimum-idle: 10
       maximum-pool-size: 20
       connection-timeout: 60000
       idle-timeout: 60000
   redis:
-    host: localhost
-    port: 6379
+    host: ${REDIS_HOST:121.250.209.74}
+    port: ${REDIS_PORT:6379}
   servlet:
     multipart:
       max-file-size: 5MB

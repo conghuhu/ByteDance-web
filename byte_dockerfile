@@ -1,4 +1,0 @@
-FROM java:8
-MAINTAINER conghuhu <conghuhu_byte>
-ADD ./byte_web.jar /app.jar
-CMD java -jar /app.jar --spring.profiles.active=prod
